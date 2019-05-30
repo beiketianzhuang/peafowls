@@ -1,6 +1,8 @@
 package com.lchen.ccdeploy.service;
 
+import com.lchen.ccdeploy.dao.JenkinsBuildHistoryRepository;
 import com.lchen.ccdeploy.model.JenkinsBuildHistory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,9 +14,14 @@ import java.util.List;
 @Service
 public class JenkinsService {
 
-    public List<JenkinsBuildHistory> builds(String context) {
+    @Autowired
+    private JenkinsBuildHistoryRepository jenkinsBuildHistoryRepository;
 
+    public List<JenkinsBuildHistory> builds(String context) {
         return null;
     }
 
+    public List<Integer> deployVersions(String context) {
+        return null;
+    }
 }

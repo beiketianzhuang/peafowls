@@ -1,8 +1,11 @@
 package com.lchen.ccdeploy.utils;
 
 import com.offbytwo.jenkins.JenkinsServer;
+import com.offbytwo.jenkins.model.Build;
+import com.offbytwo.jenkins.model.JobWithDetails;
 import com.offbytwo.jenkins.model.Queue;
 import com.offbytwo.jenkins.model.QueueItem;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,25 +21,33 @@ public class JenkinsClient {
     @Autowired
     private JenkinsServer jenkinsServer;
 
-    public void build(String context) throws IOException {
-        jenkinsServer.getJob(context).build(true);
+    public void build(@NonNull String jobName) throws IOException {
+        jenkinsServer.getJob(jobName).build(true);
     }
 
-    public void pause(String context) throws IOException{
-        //todo 可能需要其它参数
-        jenkinsServer.getJob("").getBuilds();
+    public void pause(@NonNull String jobName, @NonNull Integer buildNumber) throws IOException {
+        JobWithDetails job = jenkinsServer.getJob(jobName);
+        Build build = job.getBuildByNumber(buildNumber);
+        build.Stop();
     }
 
     /**
      * job排队情况
-     * @param context
+     *
+     * @param jobName
      * @throws IOException
      */
-    public void queues(String context) throws IOException{
+    public void queues(@NonNull String jobName) throws IOException {
         Queue queue = jenkinsServer.getQueue();
         List<QueueItem> items = queue.getItems();
+        QueueItem queueItem = jenkinsServer.getJob(jobName).getQueueItem();
     }
 
+
+    public List<Build> buildsByJob(@NonNull String jobName) throws IOException {
+        JobWithDetails job = jenkinsServer.getJob(jobName);
+        return job.getBuilds();
+    }
 
 
 }
