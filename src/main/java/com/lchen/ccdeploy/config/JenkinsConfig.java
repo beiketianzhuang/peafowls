@@ -16,9 +16,9 @@ import java.net.URI;
 public class JenkinsConfig {
 
     @Bean
-    public JenkinsServer jenkinsServer(@Value("jenkins.url") String url,
-                                       @Value("jenkins.username") String username,
-                                       @Value("jenkins.password") String password) {
+    public JenkinsServer jenkinsServer(@Value("${jenkins.url}") String url,
+                                       @Value("${jenkins.username}") String username,
+                                       @Value("${jenkins.password}") String password) {
         JenkinsHttpClient jenkinsHttpClient = new JenkinsHttpClient(URI.create(url), username, password);
         return new JenkinsServer(jenkinsHttpClient);
     }

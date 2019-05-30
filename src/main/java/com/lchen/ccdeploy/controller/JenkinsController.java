@@ -26,7 +26,6 @@ public class JenkinsController {
     }
 
     /**
-     * 获取可以选择部署的包
      *
      * @param context
      * @return
@@ -34,6 +33,11 @@ public class JenkinsController {
     @GetMapping(value = "/jenkins/contexts/builds/{context}")
     public List<JenkinsBuildHistory> builds(@PathVariable("context") String context) {
         return jenkinsService.builds(context);
+    }
+
+    @GetMapping(value = "/jenkins/contexts/version/{context}")
+    public List<Integer> deployVersion(@PathVariable("context") String context) {
+        return jenkinsService.deployVersions(context);
     }
 
     /**
