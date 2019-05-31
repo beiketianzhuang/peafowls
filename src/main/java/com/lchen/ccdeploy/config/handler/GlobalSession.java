@@ -1,23 +1,29 @@
 package com.lchen.ccdeploy.config.handler;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
 public class GlobalSession {
 
-
     /**
-     * 当客户端与服务端的连接关闭时，需要清除内存中管理的session
-     *
-     * @param userId
+     * 为每个应用维护一份数据
      */
-    public static void removeSession(String userId, WebSocketSession webSocketSession) {
+    private static Map<String, List<WebSocketSession>> contextSessions = Maps.newConcurrentMap();
+
+
+    public static void putContextSession(String context, WebSocketSession session) {
+        List<WebSocketSession> webSocketSessions = contextSessions.computeIfAbsent(context, a -> Lists.newLinkedList());
+        webSocketSessions.add(session);
     }
 
     /**
@@ -32,6 +38,10 @@ public class GlobalSession {
         if (webSocketSession.isOpen()) {
             webSocketSession.sendMessage(textMessage);
         }
+    }
+
+    public static Map<String, List<WebSocketSession>> getContextSessions() {
+        return Collections.unmodifiableMap(contextSessions);
     }
 
     public static <T> Optional<T> attributesFetch(WebSocketSession session, String key) {
