@@ -166,6 +166,7 @@
     export default {
         data() {
             return {
+                websock:{},
                 radio: '0',
                 loading: true,
                 dialogTableVisible:false,
@@ -218,20 +219,40 @@
                 }]
             }
         },
+        created() {
+            this.initWebSocket()
+        },
         methods: {
-            buildStatusFormat() {
-                return "失败";
-            },
             selectDeployVersion() {
 
                 this.dialogTableVisible = true
             },
-            setCurrent(row) {
-                this.$refs.singleTable.setCurrentRow(row);
-            },
             handleCurrentChange(val) {
                 // this.currentRow = val;
                 console.log(val);
+            },
+            initWebSocket() {
+                // WebSocket与普通的请求所用协议有所不同，ws等同于http，wss等同于https
+                this.websock = new WebSocket("ws://localhost:8082/myHandler");
+                this.websock.onopen = this.websocketonopen;
+                this.websock.onerror = this.websocketonerror;
+                this.websock.onmessage = this.websocketonmessage;
+                this.websock.onclose = this.websocketclose;
+            },
+            websocketonopen: function () {
+                console.log("WebSocket连接成功");
+                this.websock.send(JSON.stringify({"context":"demo"}));
+            },
+            websocketonerror: function (e) {
+                console.log("WebSocket连接发生错误");
+            },
+            websocketonmessage: function (e) {
+                var da = JSON.parse(e.data);
+                console.log(da);
+                this.message = da;
+            },
+            websocketclose: function (e) {
+                console.log("connection closed (" + e.code + ")");
             }
         }
     }
