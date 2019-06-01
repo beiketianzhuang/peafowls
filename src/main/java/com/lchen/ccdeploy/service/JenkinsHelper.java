@@ -8,16 +8,13 @@ import com.offbytwo.jenkins.model.BuildResult;
 import com.offbytwo.jenkins.model.BuildWithDetails;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import static com.lchen.ccdeploy.model.JenkinsBuildHistory.buildHistory;
 
@@ -27,19 +24,14 @@ import static com.lchen.ccdeploy.model.JenkinsBuildHistory.buildHistory;
  */
 @Slf4j
 @Component
-public class JenkinsHelper implements InitializingBean {
+public class JenkinsHelper {
 
     @Autowired
     private JenkinsClient jenkinsClient;
     @Autowired
     private JenkinsService jenkinsService;
-    private static ScheduledExecutorService sch = Executors.newScheduledThreadPool(2);
 
-    @Override
-    public void afterPropertiesSet() {
-        sch.scheduleAtFixedRate(this::run, 0, 6, TimeUnit.SECONDS);
-    }
-
+    @Scheduled(fixedRate = 6 * 1000)
     private void run() {
         Set<String> contexts = GlobalSession.getContextSessions().keySet();
         contexts.forEach(this::updateJenkinsByContext);
