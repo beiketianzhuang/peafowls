@@ -16,10 +16,15 @@ import java.net.URI;
 public class JenkinsConfig {
 
     @Bean
-    public JenkinsServer jenkinsServer(@Value("${jenkins.url}") String url,
-                                       @Value("${jenkins.username}") String username,
-                                       @Value("${jenkins.password}") String password) {
-        JenkinsHttpClient jenkinsHttpClient = new JenkinsHttpClient(URI.create(url), username, password);
+    public JenkinsServer jenkinsServer(JenkinsHttpClient jenkinsHttpClient) {
         return new JenkinsServer(jenkinsHttpClient);
+    }
+
+    @Bean
+    public JenkinsHttpClient jenkinsHttpClient(@Value("${jenkins.url}") String url,
+                                               @Value("${jenkins.username}") String username,
+                                               @Value("${jenkins.password}") String password) {
+        return new JenkinsHttpClient(URI.create(url), username, password);
+
     }
 }

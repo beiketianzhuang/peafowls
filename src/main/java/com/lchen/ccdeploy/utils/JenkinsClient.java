@@ -1,6 +1,7 @@
 package com.lchen.ccdeploy.utils;
 
 import com.offbytwo.jenkins.JenkinsServer;
+import com.offbytwo.jenkins.client.JenkinsHttpClient;
 import com.offbytwo.jenkins.model.Build;
 import com.offbytwo.jenkins.model.JobWithDetails;
 import com.offbytwo.jenkins.model.Queue;
@@ -9,6 +10,7 @@ import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.List;
 
@@ -20,6 +22,8 @@ import java.util.List;
 public class JenkinsClient {
     @Autowired
     private JenkinsServer jenkinsServer;
+    @Resource
+    private JenkinsHttpClient jenkinsHttpClient;
 
     public void build(@NonNull String jobName) throws IOException {
         jenkinsServer.getJob(jobName).build(true);
@@ -37,10 +41,11 @@ public class JenkinsClient {
      * @param jobName
      * @throws IOException
      */
-    public void queues(@NonNull String jobName) throws IOException {
+    public void queues(@NonNull String jobName,Integer version) throws IOException {
         Queue queue = jenkinsServer.getQueue();
         List<QueueItem> items = queue.getItems();
         QueueItem queueItem = jenkinsServer.getJob(jobName).getQueueItem();
+
     }
 
 
@@ -49,5 +54,10 @@ public class JenkinsClient {
         return job.getBuilds();
     }
 
+
+    public BuildProgress buildProgress(String jobName,Integer version) throws IOException {
+        BuildProgress buildProgress = jenkinsHttpClient.get(jobName + "/" + version + "/api/json?tree=executor[progress]", BuildProgress.class);
+        return buildProgress;
+    }
 
 }
