@@ -9,8 +9,9 @@ import lombok.Data;
  */
 @Data
 public class BuildProgress extends BaseModel {
-    //{"progress":61}
+
     private ProgressValue executor;
+
     @Data
     public static class ProgressValue {
         private Integer progress;

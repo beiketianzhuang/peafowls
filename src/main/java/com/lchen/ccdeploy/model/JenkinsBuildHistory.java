@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -38,6 +39,8 @@ public class JenkinsBuildHistory {
     private String codeChange;
     private Integer version;
     private Long buildTime;
+
+    @CreatedDate
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

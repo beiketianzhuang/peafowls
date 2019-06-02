@@ -47,9 +47,11 @@ public class JenkinsService {
         if (buildStatus == BUILDING) {
             try {
                 BuildProgress buildProgress = jenkinsClient.buildProgress(jenkinsBuildHistory.getJobName(), jenkinsBuildHistory.getVersion());
-                jenkinsBuild.setPercentage(buildProgress.getExecutor().getProgress());
+                if (buildProgress.getExecutor() != null) {
+                    jenkinsBuild.setPercentage(buildProgress.getExecutor().getProgress());
+                }
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error("获取版本{} 应用{}的构建进度失败", jenkinsBuildHistory.getVersion(), jenkinsBuildHistory.getJobName(), e);
             }
         }
         return jenkinsBuild;
@@ -63,7 +65,7 @@ public class JenkinsService {
         JenkinsBuildHistory jenkinsBuildHistory = jenkinsBuildHistoryRepository.
                 findByVersionAndJobName(buildHistory.getVersion(), buildHistory.getJobName());
         if (jenkinsBuildHistory == null) {
-            jenkinsBuildHistoryRepository.save(buildHistory);
+            jenkinsBuildHistoryRepository.saveAndFlush(buildHistory);
         } else {
             jenkinsBuildHistory.setBuildTime(buildHistory.getBuildTime());
             jenkinsBuildHistory.setBuildStatus(buildHistory.getBuildStatus());

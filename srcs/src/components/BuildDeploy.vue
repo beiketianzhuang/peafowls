@@ -1,10 +1,12 @@
 <template>
     <div>
-        <el-card class="box-card"  shadow="hover">
+        <el-card class="box-card" shadow="hover">
             <div slot="header" class="clearfix">
                 <span>构建列表</span>
                 <el-button style="float: right; padding: 3px 0" type="text">
-                    立即构建
+                    <span @click="startBuild">
+                        立即构建
+                    </span>
                 </el-button>
             </div>
             <el-table
@@ -62,8 +64,10 @@
         <el-card class="box-card" style="margin-top: 20px">
             <div slot="header" class="clearfix">
                 <span>部署</span>
-                <el-button style="float: right; padding: 3px 0" type="text"  @click="selectDeployVersion" >立即部署</el-button>
-                <el-button style="float: right; padding: 3px 10px" type="text"  @click="selectDeployVersion" >重启</el-button>
+                <el-button style="float: right; padding: 3px 0" type="text" @click="selectDeployVersion">立即部署
+                </el-button>
+                <el-button style="float: right; padding: 3px 10px" type="text" @click="selectDeployVersion">重启
+                </el-button>
             </div>
             <el-card style="height: 300px" shadow="hover">
                 <div slot="header" class="clearfix">
@@ -71,7 +75,7 @@
                 </div>
                 <el-row :gutter="20">
                     <el-col :span="8">
-                            <span>正在部署版本为<span style="color: green;font-size: 30px">#12</span>的包</span>
+                        <span>正在部署版本为<span style="color: green;font-size: 30px">#12</span>的包</span>
                     </el-col>
                     <el-col :span="8">
                         sdsf
@@ -168,14 +172,15 @@
 </template>
 
 <script>
+    import axios from 'axios'
     export default {
         data() {
             return {
-                websock:{},
+                websock: {},
                 radio: '0',
                 loading: true,
-                dialogTableVisible:false,
-                deployData:[{
+                dialogTableVisible: false,
+                deployData: [{
                     version: '9',
                     deployStatus: 'success'
                 }, {
@@ -189,14 +194,24 @@
                     deployStatus: 'deploying'
                 }],
                 jenkinsBuilds: [],
-                deploymentHistories:[]
+                deploymentHistories: []
             }
         },
         created() {
             this.initWebSocket()
         },
         methods: {
-            formatTime(row,column) {
+            startBuild() {
+                axios.defaults.baseURL = 'http://localhost:8082'
+                axios.post('/jenkins/contexts/build/demo')
+                    .then(function (response) {
+                        console.log(response);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            },
+            formatTime(row, column) {
                 return row.buildTime / 1000;
             },
             selectDeployVersion() {
@@ -216,7 +231,7 @@
                 this.websock.onclose = this.websocketclose;
             },
             websocketonopen() {
-                let data = {"context":"demo"};
+                let data = {"context": "demo"};
                 this.websock.send(JSON.stringify(data));
             },
             websocketonerror(e) {
@@ -226,7 +241,7 @@
                 console.log(resp.jenkinsBuilds[0]);
                 this.jenkinsBuilds = resp.jenkinsBuilds;
             },
-            websocketclose (e) {
+            websocketclose(e) {
             }
         }
     }
@@ -236,6 +251,7 @@
     body {
         margin: 0;
     }
+
     .text {
         font-size: 14px;
     }
@@ -265,31 +281,40 @@
 
     .el-row {
         margin-bottom: 20px;
-    &:last-child {
-         margin-bottom: 0;
-     }
+
+    &
+    :last-child {
+        margin-bottom: 0;
+    }
+
     }
     .el-col {
         border-radius: 4px;
     }
+
     .bg-purple-dark {
         background: #99a9bf;
     }
+
     .bg-purple {
         background: #d3dce6;
     }
+
     .bg-purple-light {
         background: #e5e9f2;
     }
+
     .grid-content {
         border-radius: 4px;
         min-height: 36px;
     }
+
     .row-bg {
         padding: 10px 0;
         background-color: #f9fafc;
     }
+
     /*.el-table td div{*/
-        /*float: left;*/
+    /*float: left;*/
     /*}*/
 </style>

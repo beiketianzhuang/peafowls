@@ -2,6 +2,7 @@ package com.lchen.ccdeploy.config.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lchen.ccdeploy.service.DeployBuildThread;
+import com.lchen.ccdeploy.service.JenkinsHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,8 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
 
     @Autowired
     private DeployBuildThread deployBuildThread;
+    @Autowired
+    private JenkinsHelper jenkinsHelper;
 
     /**
      * 客户端与服务端建立连接后，将该连接与应用绑定
@@ -40,8 +43,9 @@ public class MessageWebSocketHandler extends TextWebSocketHandler {
             ObjectMapper mapper = new ObjectMapper();
             try {
                 String context = (String) mapper.readValue(payload, Map.class).get("context");
-                GlobalSession.putContextSession(context,session);
-                session.getAttributes().put("context",context);
+                GlobalSession.putContextSession(context, session);
+                session.getAttributes().put("context", context);
+                jenkinsHelper.updateJenkinsByContext(context);
                 //发送
                 deployBuildThread.pushByContext(context);
             } catch (IOException e) {

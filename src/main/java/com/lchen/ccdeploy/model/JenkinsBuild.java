@@ -4,7 +4,6 @@ import com.lchen.ccdeploy.model.constants.JenkinsBuildStatus;
 import lombok.Builder;
 import lombok.Data;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -30,6 +29,7 @@ public class JenkinsBuild {
 
     public static JenkinsBuild apply(JenkinsBuildHistory details) {
         JenkinsBuildStatus jenkinsBuildStatus = details.getBuildStatus();
+        //fixme details.createdAt 在创建后同一个事务做查询，没有值
         return JenkinsBuild.builder()
                 .buildStatus(details.getBuildStatus())
                 .version(details.getVersion())
@@ -39,7 +39,7 @@ public class JenkinsBuild {
                 .badge(jenkinsBuildStatus.badge)
                 .statusCh(jenkinsBuildStatus.statusCh)
                 .buildTime(details.getBuildTime())
-                .createdAt(details.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                .createdAt(details.getCreatedAt() != null ? details.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) : null)
                 .build();
     }
 }

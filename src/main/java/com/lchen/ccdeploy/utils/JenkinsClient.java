@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author : lchen
@@ -48,6 +49,12 @@ public class JenkinsClient {
 
     }
 
+    public Optional<Long> queueing(@NonNull String context) throws IOException {
+        QueueItem queueItem = jenkinsServer.getJob(context).getQueueItem();
+        if (queueItem == null) return Optional.empty();
+        return Optional.of(queueItem.getId());
+    }
+
 
     public List<Build> buildsByJob(@NonNull String jobName) throws IOException {
         JobWithDetails job = jenkinsServer.getJob(jobName);
@@ -56,8 +63,7 @@ public class JenkinsClient {
 
 
     public BuildProgress buildProgress(String jobName,Integer version) throws IOException {
-        BuildProgress buildProgress = jenkinsHttpClient.get("/job/"+jobName + "/" + version + "?tree=executor[progress]", BuildProgress.class);
-        return buildProgress;
+        return jenkinsHttpClient.get("/job/"+jobName + "/" + version + "?tree=executor[progress]", BuildProgress.class);
     }
 
 }
