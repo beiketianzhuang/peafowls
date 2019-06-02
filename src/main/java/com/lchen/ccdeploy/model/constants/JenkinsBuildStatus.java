@@ -7,7 +7,7 @@ public enum JenkinsBuildStatus {
     QUEUE("排队中","black","info"),
     FAILURE("构建失败", "red", "danger"),
     UNSTABLE("构建不稳定","#E6A23C","warning"),
-    CANCELLED("","","");
+    ABORTED("被取消","black","info");
     public String statusCh;
     public String color;
     public String badge;

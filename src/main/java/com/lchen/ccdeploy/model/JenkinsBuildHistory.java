@@ -1,16 +1,21 @@
 package com.lchen.ccdeploy.model;
 
 import com.lchen.ccdeploy.model.constants.JenkinsBuildStatus;
-import com.offbytwo.jenkins.model.BuildResult;
+import com.offbytwo.jenkins.model.BuildChangeSet;
+import com.offbytwo.jenkins.model.BuildChangeSetItem;
 import com.offbytwo.jenkins.model.BuildWithDetails;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 /**
  * @author : lchen
@@ -19,12 +24,16 @@ import java.time.LocalDateTime;
 @Entity
 @Data
 @Builder
+@Table(name = "cc_deploy_jenkins_history")
+@AllArgsConstructor
+@NoArgsConstructor
 public class JenkinsBuildHistory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String jobName;
+    @Enumerated(value = EnumType.STRING)
     private JenkinsBuildStatus buildStatus;
     private String codeChange;
     private Integer version;
@@ -32,14 +41,25 @@ public class JenkinsBuildHistory {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public static JenkinsBuildHistory buildHistory(BuildWithDetails details, BuildResult result) {
+    public static JenkinsBuildHistory buildHistory(BuildWithDetails details, String context) {
 
         return JenkinsBuildHistory.builder()
-                .buildStatus(JenkinsBuildStatus.valueOf(result.name()))
+                .buildStatus(details.isBuilding() ? JenkinsBuildStatus.BUILDING : JenkinsBuildStatus.valueOf(details.getResult().name()))
                 .version(details.getNumber())
-                .codeChange(details.getChangeSets().toString())
-                .jobName(details.getFullDisplayName())
+                .codeChange(codeChange(details.getChangeSets()))
+                .jobName(context)
+                .buildTime(details.getDuration())
                 .build();
+    }
+
+    public static String codeChange(List<BuildChangeSet> changeSets) {
+        if (changeSets != null) {
+            List<String> msg = changeSets.stream()
+                    .flatMap(changeSet -> changeSet.getItems().stream().map(BuildChangeSetItem::getMsg))
+                    .collect(toList());
+            return StringUtils.join(msg, "<br>");
+        }
+        return EMPTY;
     }
 
 }

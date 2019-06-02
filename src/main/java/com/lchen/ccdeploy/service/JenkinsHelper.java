@@ -4,7 +4,6 @@ import com.lchen.ccdeploy.config.handler.GlobalSession;
 import com.lchen.ccdeploy.model.JenkinsBuildHistory;
 import com.lchen.ccdeploy.utils.JenkinsClient;
 import com.offbytwo.jenkins.model.Build;
-import com.offbytwo.jenkins.model.BuildResult;
 import com.offbytwo.jenkins.model.BuildWithDetails;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -40,22 +39,18 @@ public class JenkinsHelper {
     public void updateJenkinsByContext(String context) {
         try {
             List<Build> builds = jenkinsClient.buildsByJob(context);
-            builds.forEach(this::updateJenkinsBuild);
+            for (Build build : builds) {
+                updateJenkinsBuild(build, context);
+            }
         } catch (IOException e) {
             log.error("获取应用{}的构建列表失败", context, e);
         }
     }
 
-    private void updateJenkinsBuild(Build build) {
+    private void updateJenkinsBuild(Build build, String context) {
         try {
             BuildWithDetails details = build.details();
-            boolean building = details.isBuilding();
-            JenkinsBuildHistory jenkinsBuildHistory;
-            if (building) {
-                jenkinsBuildHistory = buildHistory(details, BuildResult.BUILDING);
-            } else {
-                jenkinsBuildHistory = buildHistory(details, details.getResult());
-            }
+            JenkinsBuildHistory jenkinsBuildHistory = buildHistory(details, context);
             jenkinsService.createOrUpdate(jenkinsBuildHistory);
         } catch (IOException e) {
             log.error("", e);

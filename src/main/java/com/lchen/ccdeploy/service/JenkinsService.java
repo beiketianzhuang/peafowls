@@ -1,14 +1,13 @@
 package com.lchen.ccdeploy.service;
 
-import com.google.common.collect.Lists;
 import com.lchen.ccdeploy.dao.JenkinsBuildHistoryRepository;
 import com.lchen.ccdeploy.model.JenkinsBuild;
 import com.lchen.ccdeploy.model.JenkinsBuildHistory;
 import com.lchen.ccdeploy.model.constants.JenkinsBuildStatus;
 import com.lchen.ccdeploy.utils.BuildProgress;
 import com.lchen.ccdeploy.utils.JenkinsClient;
-import com.offbytwo.jenkins.model.Build;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +21,7 @@ import static java.util.stream.Collectors.toList;
  * @author : lchen
  * @date : 2019/5/29
  */
+@Slf4j
 @Service
 public class JenkinsService {
 
@@ -32,8 +32,7 @@ public class JenkinsService {
     private JenkinsBuildHistoryRepository jenkinsBuildHistoryRepository;
 
     public List<JenkinsBuildHistory> builds(String context) {
-        List<JenkinsBuildHistory> builds = Lists.newArrayList();
-        return builds;
+        return jenkinsBuildHistoryRepository.findLatelyByVersionAndJobName(context);
     }
 
 
@@ -48,7 +47,7 @@ public class JenkinsService {
         if (buildStatus == BUILDING) {
             try {
                 BuildProgress buildProgress = jenkinsClient.buildProgress(jenkinsBuildHistory.getJobName(), jenkinsBuildHistory.getVersion());
-                jenkinsBuild.setPercentage(buildProgress.getExecutor());
+                jenkinsBuild.setPercentage(buildProgress.getExecutor().getProgress());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -61,6 +60,14 @@ public class JenkinsService {
     }
 
     public void createOrUpdate(JenkinsBuildHistory buildHistory) {
-
+        JenkinsBuildHistory jenkinsBuildHistory = jenkinsBuildHistoryRepository.
+                findByVersionAndJobName(buildHistory.getVersion(), buildHistory.getJobName());
+        if (jenkinsBuildHistory == null) {
+            jenkinsBuildHistoryRepository.save(buildHistory);
+        } else {
+            jenkinsBuildHistory.setBuildTime(buildHistory.getBuildTime());
+            jenkinsBuildHistory.setBuildStatus(buildHistory.getBuildStatus());
+            jenkinsBuildHistoryRepository.saveAndFlush(jenkinsBuildHistory);
+        }
     }
 }

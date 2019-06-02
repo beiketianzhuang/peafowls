@@ -56,7 +56,7 @@ public class JenkinsClient {
 
 
     public BuildProgress buildProgress(String jobName,Integer version) throws IOException {
-        BuildProgress buildProgress = jenkinsHttpClient.get(jobName + "/" + version + "/api/json?tree=executor[progress]", BuildProgress.class);
+        BuildProgress buildProgress = jenkinsHttpClient.get("/job/"+jobName + "/" + version + "?tree=executor[progress]", BuildProgress.class);
         return buildProgress;
     }
 

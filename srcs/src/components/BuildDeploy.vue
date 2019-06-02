@@ -8,7 +8,7 @@
                 </el-button>
             </div>
             <el-table
-                    :data="tableData"
+                    :data="jenkinsBuilds"
                     style="width: 100%">
                 <el-table-column
                         prop="version"
@@ -18,7 +18,7 @@
                 <el-table-column
                         label="构建状态">
                     <template slot-scope="scope">
-                        <div v-if="scope.row.buildStatus == 'building'">
+                        <div v-if="scope.row.buildStatus == 'BUILDING'">
                             <span style="color:#409eff">
                                 <a href="#">
                                     查看日志
@@ -39,13 +39,18 @@
                 </el-table-column>
                 <el-table-column
                         prop="buildTime"
+                        label="构建耗时（秒）"
+                        :formatter="formatTime">
+                </el-table-column>
+                <el-table-column
+                        prop="createdAt"
                         label="构建时间">
                 </el-table-column>
                 <el-table-column
                         fixed="right"
                         label="操作">
                     <template slot-scope="scope">
-                        <div v-if="scope.row.buildStatus == 'building'">
+                        <div v-if="scope.row.buildStatus == 'BUILDING'">
                             <el-button type="text">
                                 <span>取消构建</span>
                             </el-button>
@@ -93,7 +98,7 @@
                 </div>
                 <template>
                     <el-table
-                            :data="tableData"
+                            :data="deploymentHistories"
                             stripe
                             style="width: 100%">
                         <el-table-column
@@ -183,46 +188,17 @@
                     version: '6',
                     deployStatus: 'deploying'
                 }],
-                tableData: [{
-                    buildStatus: 'building',
-                    version: '4',
-                    codeChange: '代码变更',
-                    statusCh: '构建中',
-                    badge: 'info',
-                    color:'unknown',
-                    percentage:80
-                }, {
-                    buildStatus: 'success',
-                    version: '3',
-                    codeChange: '代码变更',
-                    statusCh: '构建成功',
-                    badge: 'success',
-                    color:'green',
-                    percentage:100
-                }, {
-                    buildStatus: 'failed',
-                    version: '2',
-                    codeChange: '代码变更',
-                    statusCh: '构建失败',
-                    badge: 'danger',
-                    color:'red',
-                    percentage:100,
-                    buildTime:10
-                }, {
-                    buildStatus: 'unstable',
-                    version: '1',
-                    codeChange: '代码变更',
-                    statusCh: '构建不稳定',
-                    badge: 'warning',
-                    color:'#E6A23C',
-                    percentage:100
-                }]
+                jenkinsBuilds: [],
+                deploymentHistories:[]
             }
         },
         created() {
             this.initWebSocket()
         },
         methods: {
+            formatTime(row,column) {
+                return row.buildTime / 1000;
+            },
             selectDeployVersion() {
 
                 this.dialogTableVisible = true
@@ -239,20 +215,18 @@
                 this.websock.onmessage = this.websocketonmessage;
                 this.websock.onclose = this.websocketclose;
             },
-            websocketonopen: function () {
-                console.log("WebSocket连接成功");
-                this.websock.send(JSON.stringify({"context":"demo"}));
+            websocketonopen() {
+                let data = {"context":"demo"};
+                this.websock.send(JSON.stringify(data));
             },
-            websocketonerror: function (e) {
-                console.log("WebSocket连接发生错误");
+            websocketonerror(e) {
             },
-            websocketonmessage: function (e) {
-                var da = JSON.parse(e.data);
-                console.log(da);
-                this.message = da;
+            websocketonmessage(e) {
+                let resp = JSON.parse(e.data);
+                console.log(resp.jenkinsBuilds[0]);
+                this.jenkinsBuilds = resp.jenkinsBuilds;
             },
-            websocketclose: function (e) {
-                console.log("connection closed (" + e.code + ")");
+            websocketclose (e) {
             }
         }
     }
