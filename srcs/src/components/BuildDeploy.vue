@@ -126,9 +126,10 @@
                 </template>
             </el-card>
         </el-card>
-        <el-dialog style="height: 800px" title="选择部署版本" :visible.sync="dialogTableVisible">
+        <el-dialog style="height: 800px"  title="选择部署版本" :visible.sync="dialogTableVisible">
             <div>
                 <el-table
+                        ref="singleTable"
                         :data="deployData"
                         highlight-current-row
                         @current-change="handleCurrentChange"
@@ -158,13 +159,20 @@
                             label="选择"
                             max-width="20%">
                         <template slot-scope="scope">
-                            <el-button :type="info" v-model="radixo" icon="el-icon-check" circle></el-button>
+                            <div v-if="scope.row.showSelect">
+                                <i style="font-size: 30px;color: green" class="el-icon-check"></i>
+                            </div>
                         </template>
                     </el-table-column>
                 </el-table>
             </div>
             <span slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="dialogVisible = false">立即部署</el-button>
+                <div>
+                     <div v-if="deployVersion != null" style="float: left">
+                        部署版本<span style="color: green;font-size: 30px">#{{deployVersion}}</span>
+                     </div>
+                     <el-button type="primary" @click="dialogVisible = false">立即部署</el-button>
+                </div>
               </span>
         </el-dialog>
     </div>
@@ -173,6 +181,7 @@
 
 <script>
     import axios from 'axios'
+
     export default {
         data() {
             return {
@@ -182,17 +191,22 @@
                 dialogTableVisible: false,
                 deployData: [{
                     version: '9',
-                    deployStatus: 'success'
+                    deployStatus: 'success',
+                    showSelect:false
                 }, {
                     version: '8',
-                    deployStatus: 'success'
+                    deployStatus: 'success',
+                    showSelect:true
                 }, {
                     version: '7',
-                    deployStatus: 'danger'
+                    deployStatus: 'danger',
+                    showSelect:false
                 }, {
                     version: '6',
-                    deployStatus: 'deploying'
+                    deployStatus: 'deploying',
+                    showSelect:false
                 }],
+                deployVersion:null,
                 jenkinsBuilds: [],
                 deploymentHistories: []
             }
@@ -201,6 +215,9 @@
             this.initWebSocket()
         },
         methods: {
+            deploy() {
+
+            },
             startBuild() {
                 axios.defaults.baseURL = 'http://localhost:8082'
                 axios.post('/jenkins/contexts/build/demo')
@@ -219,8 +236,12 @@
                 this.dialogTableVisible = true
             },
             handleCurrentChange(val) {
-                // this.currentRow = val;
-                console.log(val);
+                this.deployVersion = val.version;
+                this.deployData.forEach(function (value, index) {
+                    value.showSelect = false;
+                });
+                val.showSelect = true;
+                console.log(val.version);
             },
             initWebSocket() {
                 // WebSocket与普通的请求所用协议有所不同，ws等同于http，wss等同于https
