@@ -12,7 +12,7 @@ import env from './config/env'
 
 
 Vue.config.productionTip = false;
-axios.defaults.baseURL = 'http://localhost:8081';
+axios.defaults.baseURL = 'http://localhost:8082';
 
 
 Vue.use(Vuex);

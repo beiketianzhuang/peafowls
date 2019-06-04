@@ -1,5 +1,6 @@
 package com.lchen.ccdeploy.controller;
 
+import com.lchen.ccdeploy.model.DeploymentVersion;
 import com.lchen.ccdeploy.model.JenkinsBuildHistory;
 import com.lchen.ccdeploy.service.JenkinsHelper;
 import com.lchen.ccdeploy.service.JenkinsService;
@@ -35,10 +36,6 @@ public class JenkinsController {
         return jenkinsService.builds(context);
     }
 
-    @GetMapping(value = "/jenkins/contexts/version/{context}")
-    public List<Integer> deployVersion(@PathVariable("context") String context) {
-        return jenkinsService.deployVersions(context);
-    }
 
     /**
      * 取消构建

@@ -1,6 +1,7 @@
 package com.lchen.ccdeploy.service;
 
 import com.lchen.ccdeploy.dao.JenkinsBuildHistoryRepository;
+import com.lchen.ccdeploy.model.DeploymentVersion;
 import com.lchen.ccdeploy.model.JenkinsBuild;
 import com.lchen.ccdeploy.model.JenkinsBuildHistory;
 import com.lchen.ccdeploy.model.constants.JenkinsBuildStatus;
@@ -57,8 +58,10 @@ public class JenkinsService {
         return jenkinsBuild;
     }
 
-    public List<Integer> deployVersions(String context) {
-        return null;
+    public List<DeploymentVersion> deployVersions(@NonNull String context) {
+        List<JenkinsBuildHistory> jenkinsBuildHistories = jenkinsBuildHistoryRepository.findDeployVersionAndJobName(context);
+
+        return  null;
     }
 
     public void createOrUpdate(JenkinsBuildHistory buildHistory) {

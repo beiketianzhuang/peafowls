@@ -126,7 +126,7 @@
                 </template>
             </el-card>
         </el-card>
-        <el-dialog style="height: 800px"  title="选择部署版本" :visible.sync="dialogTableVisible">
+        <el-dialog style="height: 800px" title="选择部署版本" :visible.sync="dialogTableVisible">
             <div>
                 <el-table
                         ref="singleTable"
@@ -189,24 +189,8 @@
                 radio: '0',
                 loading: true,
                 dialogTableVisible: false,
-                deployData: [{
-                    version: '9',
-                    deployStatus: 'success',
-                    showSelect:false
-                }, {
-                    version: '8',
-                    deployStatus: 'success',
-                    showSelect:true
-                }, {
-                    version: '7',
-                    deployStatus: 'danger',
-                    showSelect:false
-                }, {
-                    version: '6',
-                    deployStatus: 'deploying',
-                    showSelect:false
-                }],
-                deployVersion:null,
+                deployData: [{"version":86,"deployStatus":"danger","showSelect":false},{"version":85,"deployStatus":"deploying","showSelect":false}],
+                deployVersion: null,
                 jenkinsBuilds: [],
                 deploymentHistories: []
             }
@@ -219,7 +203,6 @@
 
             },
             startBuild() {
-                axios.defaults.baseURL = 'http://localhost:8082'
                 axios.post('/jenkins/contexts/build/demo')
                     .then(function (response) {
                         console.log(response);
@@ -232,7 +215,13 @@
                 return row.buildTime / 1000;
             },
             selectDeployVersion() {
-
+                axios.get('/contexts/deploy/version/demo')
+                    .then(function (response) {
+                        console.log(response.data);
+                        this.deployData = response.data;
+                    })
+                    .catch(function (error) {
+                    });
                 this.dialogTableVisible = true
             },
             handleCurrentChange(val) {
