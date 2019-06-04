@@ -209,6 +209,7 @@
     export default {
         data() {
             return {
+                context:'',
                 websock: {},
                 radio: '0',
                 loading: true,
@@ -250,6 +251,7 @@
             }
         },
         created() {
+            this.context = this.$route.query.context;
             this.initWebSocket()
         },
         methods: {
@@ -262,21 +264,18 @@
 
             },
             startBuild() {
-                axios.post('/jenkins/contexts/build/demo')
+                axios.post('/jenkins/contexts/build/'+this.context)
                     .then(function (response) {
-                        console.log(response);
                     })
                     .catch(function (error) {
-                        console.log(error);
                     });
             },
             formatTime(row, column) {
                 return row.buildTime / 1000;
             },
             selectDeployVersion() {
-                axios.get('/contexts/deploy/version/demo')
+                axios.get('/contexts/deploy/version/'+this.context)
                     .then(function (response) {
-                        console.log(response.data);
                         this.deployData = response.data;
                     })
                     .catch(function (error) {
@@ -289,7 +288,6 @@
                     value.showSelect = false;
                 });
                 val.showSelect = true;
-                console.log(val.version);
             },
             initWebSocket() {
                 // WebSocket与普通的请求所用协议有所不同，ws等同于http，wss等同于https
@@ -300,14 +298,13 @@
                 this.websock.onclose = this.websocketclose;
             },
             websocketonopen() {
-                let data = {"context": "demo"};
+                let data = {"context": this.context};
                 this.websock.send(JSON.stringify(data));
             },
             websocketonerror(e) {
             },
             websocketonmessage(e) {
                 let resp = JSON.parse(e.data);
-                console.log(resp.jenkinsBuilds[0]);
                 this.jenkinsBuilds = resp.jenkinsBuilds;
             },
             websocketclose(e) {

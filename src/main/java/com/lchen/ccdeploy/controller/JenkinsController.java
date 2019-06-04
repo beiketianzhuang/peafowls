@@ -1,6 +1,5 @@
 package com.lchen.ccdeploy.controller;
 
-import com.lchen.ccdeploy.model.DeploymentVersion;
 import com.lchen.ccdeploy.model.JenkinsBuildHistory;
 import com.lchen.ccdeploy.service.JenkinsHelper;
 import com.lchen.ccdeploy.service.JenkinsService;
