@@ -111,21 +111,45 @@
                                 width="180">
                         </el-table-column>
                         <el-table-column
-                                prop="version"
+                                prop="buildVersion"
                                 label="构建物版本">
                         </el-table-column>
                         <el-table-column
-                                prop="name"
                                 label="部署结果">
+                            <template slot-scope="scope">
+                                <el-badge is-dot class="item" :type="scope.row.result.badge">
+                                </el-badge>
+                                <el-link :underline="false" @click="deployProcess(scope.row.result.status)">
+                                    <span :style="{color:scope.row.result.color}">{{scope.row.result.status[7]}}</span>
+                                </el-link>
+                            </template>
                         </el-table-column>
                         <el-table-column
-                                prop="address"
+                                prop="name"
+                                label="操作人">
+                        </el-table-column>
+                        <el-table-column
+                                prop="createdAt"
                                 label="部署时间">
                         </el-table-column>
                     </el-table>
                 </template>
             </el-card>
         </el-card>
+        <el-dialog width="30%" title="部署日志" :visible.sync="deployProcessVisible">
+            <div style="background-color: black;color: white;padding: 0px">
+                <br>
+                <div v-for="process in status" :key="process">
+                    <div v-if="process.includes('失败')">
+                        <span style="color: red;">{{process}}</span><br>
+                    </div>
+                    <div v-else>
+                        {{process}}<br>
+                    </div>
+                </div>
+                <br>
+            </div>
+        </el-dialog>
         <el-dialog style="height: 800px" title="选择部署版本" :visible.sync="dialogTableVisible">
             <div>
                 <el-table
@@ -188,17 +212,52 @@
                 websock: {},
                 radio: '0',
                 loading: true,
+                status:[],
                 dialogTableVisible: false,
                 deployData: [{"version":86,"deployStatus":"danger","showSelect":false},{"version":85,"deployStatus":"deploying","showSelect":false}],
                 deployVersion: null,
+                deployProcessVisible: false,
+                deployData: [{
+                    version: '9',
+                    deployStatus: 'success',
+                    showSelect: false
+                }, {
+                    version: '8',
+                    deployStatus: 'success',
+                    showSelect: true
+                }, {
+                    version: '7',
+                    deployStatus: 'danger',
+                    showSelect: false
+                }, {
+                    version: '6',
+                    deployStatus: 'deploying',
+                    showSelect: false
+                }],
+                deployVersion: null,
                 jenkinsBuilds: [],
-                deploymentHistories: []
+                deploymentHistories: [{
+                    "version": 1,
+                    "buildVersion": 87,
+                    "result": {
+                        "color": "green",
+                        "badge": "success",
+                        "status": ["部署开始", "停止服务成功", "删除旧包成功", "拷贝包成功", "服务启动成功", "服务验证中", "验证成功", "部署失败"]
+                    },
+                    "name": "陈朗",
+                    "createdAt": "2019-06-03"
+                }]
             }
         },
         created() {
             this.initWebSocket()
         },
         methods: {
+            deployProcess(row) {
+                this.status = row;
+                this.deployProcessVisible = true;
+
+            },
             deploy() {
 
             },
@@ -292,12 +351,16 @@
     .el-row {
         margin-bottom: 20px;
 
-    &
+    }
+
+    a:link, a:visited {
+        text-decoration: none; /*超链接无下划线*/
+    }
+
     :last-child {
         margin-bottom: 0;
     }
 
-    }
     .el-col {
         border-radius: 4px;
     }
