@@ -1,7 +1,7 @@
 <template>
     <el-card class="box-card">
         <div slot="header" class="clearfix">
-            <span>应用列表</span>
+            <span style="float: left"><h4>应用列表</h4></span>
             <el-button style="float: right; padding: 3px 0" type="text" @click="addEvent">添加应用</el-button>
         </div>
         <el-table
@@ -222,7 +222,8 @@
     }
 
     .box-card {
-        width: 90%;
+        width: 100%;
+        height: 800px;
         margin: auto;
     }
 </style>
