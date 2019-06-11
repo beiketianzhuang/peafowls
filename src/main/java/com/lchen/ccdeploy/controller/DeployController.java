@@ -1,7 +1,7 @@
 package com.lchen.ccdeploy.controller;
 
 import com.lchen.ccdeploy.model.DeploymentVersion;
-import com.lchen.ccdeploy.service.DeployHelper;
+import com.lchen.ccdeploy.service.DeployClient;
 import com.lchen.ccdeploy.service.DeploymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +16,7 @@ import java.util.List;
 public class DeployController {
 
     @Autowired
-    private DeployHelper deployHelper;
+    private DeployClient deployClient;
     @Autowired
     private DeploymentService deploymentService;
 
@@ -24,12 +24,12 @@ public class DeployController {
      * 部署
      *
      * @param context
-     * @param buildId
+     * @param deployVersion
      */
     @PostMapping(value = "/contexts/deploy/{context}")
     public void deploy(@PathVariable("context") String context,
-                       @RequestParam("buildId") Integer buildId) {
-        deployHelper.deploy(context, buildId);
+                       @RequestParam("deployVersion") Integer deployVersion) {
+        deployClient.deploy(context, deployVersion);
     }
 
     /**

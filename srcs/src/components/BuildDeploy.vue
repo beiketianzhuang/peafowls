@@ -195,7 +195,7 @@
                      <div v-if="deployVersion != null" style="float: left">
                         部署版本<span style="color: green;font-size: 30px">#{{deployVersion}}</span>
                      </div>
-                     <el-button type="primary" @click="dialogVisible = false">立即部署</el-button>
+                     <el-button type="primary" @click="deploy">立即部署</el-button>
                 </div>
               </span>
         </el-dialog>
@@ -206,35 +206,19 @@
 <script>
     import axios from 'axios'
 
+    const _self = this;
     export default {
         data() {
             return {
-                context:'',
+                context: '',
                 websock: {},
                 radio: '0',
                 loading: true,
-                status:[],
+                status: [],
                 dialogTableVisible: false,
-                deployData: [{"version":86,"deployStatus":"danger","showSelect":false},{"version":85,"deployStatus":"deploying","showSelect":false}],
                 deployVersion: null,
                 deployProcessVisible: false,
-                deployData: [{
-                    version: '9',
-                    deployStatus: 'success',
-                    showSelect: false
-                }, {
-                    version: '8',
-                    deployStatus: 'success',
-                    showSelect: true
-                }, {
-                    version: '7',
-                    deployStatus: 'danger',
-                    showSelect: false
-                }, {
-                    version: '6',
-                    deployStatus: 'deploying',
-                    showSelect: false
-                }],
+                deployData: null,
                 deployVersion: null,
                 jenkinsBuilds: [],
                 deploymentHistories: [{
@@ -250,6 +234,7 @@
                 }]
             }
         },
+
         created() {
             this.context = this.$route.query.context;
             this.initWebSocket()
@@ -261,10 +246,16 @@
 
             },
             deploy() {
+                axios.post('/contexts/deploy/' + this.context+"?deployVersion="+this.deployVersion)
+                    .then((response) => {
+                        this.dialogVisible = false
+                    })
+                    .catch(function (error) {
 
+                    });
             },
             startBuild() {
-                axios.post('/jenkins/contexts/build/'+this.context)
+                axios.post('/jenkins/contexts/build/' + this.context)
                     .then(function (response) {
                     })
                     .catch(function (error) {
@@ -274,11 +265,15 @@
                 return row.buildTime / 1000;
             },
             selectDeployVersion() {
-                axios.get('/contexts/deploy/version/'+this.context)
-                    .then(function (response) {
+                axios.get('/contexts/deploy/version/' + this.context)
+                    .then((response) => {
                         this.deployData = response.data;
+                        console.log(response.data);
+                        // _self.deployData = response.data;
+                        console.log("deploydata:")
                     })
                     .catch(function (error) {
+                        console.log(error);
                     });
                 this.dialogTableVisible = true
             },

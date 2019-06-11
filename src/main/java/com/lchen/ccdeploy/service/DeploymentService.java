@@ -2,13 +2,18 @@ package com.lchen.ccdeploy.service;
 
 import com.google.common.collect.Lists;
 import com.lchen.ccdeploy.dao.DeploymentRepository;
+import com.lchen.ccdeploy.dao.JenkinsBuildHistoryRepository;
 import com.lchen.ccdeploy.model.DeploymentResult;
 import com.lchen.ccdeploy.model.DeploymentVersion;
+import com.lchen.ccdeploy.model.JenkinsBuildHistory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
+import java.util.Optional;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author : lchen
@@ -19,13 +24,23 @@ public class DeploymentService {
 
     @Autowired
     private DeploymentRepository deploymentRepository;
+    @Autowired
+    private JenkinsBuildHistoryRepository jenkinsBuildHistoryRepository;
 
     public List<DeploymentVersion> deploymentVersions(String context) {
-        List<DeploymentResult> deploymentResult = deploymentRepository.findAllByContextCanDeployVersion(context);
-        return deploymentResult.stream().map(DeploymentVersion::apply).collect(Collectors.toList());
+        List<JenkinsBuildHistory> jenkinsBuildHistories = jenkinsBuildHistoryRepository.findDeployVersionAndJobName(context);
+        return jenkinsBuildHistories.stream().map(this::apply).filter(Objects::nonNull).collect(toList());
     }
 
     public List<DeploymentResult> listDeploymentResult(String context) {
         return Lists.newArrayList();
     }
+
+    public DeploymentVersion apply(JenkinsBuildHistory jenkinsBuildHistory) {
+        Optional<DeploymentResult> deploymentResultOptional = deploymentRepository.findAllByContextCanDeployVersion(
+                jenkinsBuildHistory.getJobName(),
+                jenkinsBuildHistory.getVersion());
+        return deploymentResultOptional.map(DeploymentVersion::apply).orElse(null);
+    }
+
 }
