@@ -13,6 +13,7 @@ import javax.persistence.*;
  */
 @Data
 @Entity
+@Table(name = "cc_deploy_pwd")
 @NoArgsConstructor
 @AllArgsConstructor
 public class DeployPassword {

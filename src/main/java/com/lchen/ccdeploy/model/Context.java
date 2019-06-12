@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Data
+@Table(name = "cc_deploy_context")
 public class Context {
 
     @Id
