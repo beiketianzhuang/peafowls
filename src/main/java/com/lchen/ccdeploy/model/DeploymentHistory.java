@@ -1,5 +1,6 @@
 package com.lchen.ccdeploy.model;
 
+import lombok.Builder;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -10,8 +11,9 @@ import javax.persistence.*;
  */
 @Data
 @Entity
+@Builder
 @Table(name = "cc_deploy_history")
-public class DepoloymentHistory {
+public class DeploymentHistory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

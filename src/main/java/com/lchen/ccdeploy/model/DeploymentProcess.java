@@ -8,9 +8,12 @@ public enum DeploymentProcess {
 
     //
     START("部署开始"),
-    STOPSERVICESTART("停止服务开始"),
-    STOPSERVICESUCCESS("停止服务成功"),
-    STOPSERVICEFAILED("停止服务失败"),
+    CONNECT_START("连接服务器开始"),
+    CONNECT_SUCCESS("连接服务器成功"),
+    CONNECT_FAILED("连接服务器失败"),
+    STOP_SERVICE_START("停止服务开始"),
+    STOP_SERVICE_SUCCESS("停止服务成功"),
+    STOP_SERVICE_FAILED("停止服务失败"),
     DELETE_PACKAGE_START("删除旧包开始"),
     DELETE_PACKAGE_SUCCESS("删除旧包成功"),
     DELETE_PACKAGE_FAILED("删除旧包失败"),
