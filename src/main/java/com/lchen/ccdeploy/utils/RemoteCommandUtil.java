@@ -20,21 +20,16 @@ public class RemoteCommandUtil {
      */
     public static Connection login(String ip,
                                    String userName,
-                                   String userPwd) {
+                                   String userPwd) throws IOException {
 
         boolean flg = false;
         Connection conn = null;
-        try {
-            conn = new Connection(ip);
-            conn.connect();//连接  
-            flg = conn.authenticateWithPassword(userName, userPwd);//认证
-            if (flg) {
-                log.info("=========登录成功=========" + conn);
-                return conn;
-            }
-        } catch (IOException e) {
-            log.error("=========登录失败=========" + e.getMessage());
-            e.printStackTrace();
+        conn = new Connection(ip);
+        conn.connect();//连接
+        flg = conn.authenticateWithPassword(userName, userPwd);
+        if (flg) {
+            log.info("=========登录成功=========" + conn);
+            return conn;
         }
         return conn;
     }
@@ -45,26 +40,21 @@ public class RemoteCommandUtil {
      * @param cmd 即将执行的命令
      * @return 命令执行完后返回的结果值
      */
-    public static String execute(Connection conn, String cmd) {
+    public static String execute(Connection conn, String cmd) throws IOException {
         String result = "";
-        try {
-            if (conn != null) {
-                Session session = conn.openSession();//打开一个会话
-                session.execCommand(cmd);//执行命令  
-                result = processStdout(session.getStdout(), DEFAULTCHART);
-                //如果为得到标准输出为空，说明脚本执行出错了  
-                if (StringUtils.isBlank(result)) {
-                    log.info("得到标准输出为空,链接conn:" + conn + ",执行的命令：" + cmd);
-                    result = processStdout(session.getStderr(), DEFAULTCHART);
-                } else {
-                    log.info("执行命令成功,链接conn:" + conn + ",执行的命令：" + cmd);
-                }
-                conn.close();
-                session.close();
+        if (conn != null) {
+            Session session = conn.openSession();
+            session.execCommand(cmd);
+            result = processStdout(session.getStdout(), DEFAULTCHART);
+            //如果为得到标准输出为空，说明脚本执行出错了
+            if (StringUtils.isBlank(result)) {
+                log.info("得到标准输出为空,链接conn:" + conn + ",执行的命令：" + cmd);
+                result = processStdout(session.getStderr(), DEFAULTCHART);
+            } else {
+                log.info("执行命令成功,链接conn:" + conn + ",执行的命令：" + cmd);
             }
-        } catch (IOException e) {
-            log.info("执行命令失败,链接conn:" + conn + ",执行的命令：" + cmd + "  " + e.getMessage());
-            e.printStackTrace();
+            conn.close();
+            session.close();
         }
         return result;
     }

@@ -35,4 +35,27 @@ public enum DeploymentProcess {
         this.process = process;
     }
 
+    public String getProcess() {
+        return this.process;
+    }
+
+    public String getColor() {
+        if (this == SUCCESS ) {
+            return "green";
+        }
+        if (this == FAILED) {
+            return "red";
+        }
+        return "black";
+    }
+    public String getBadge() {
+        if (this == SUCCESS ) {
+            return "success";
+        }
+        if (this == FAILED) {
+            return "failed";
+        }
+        return "info";
+    }
+
 }

@@ -1,6 +1,5 @@
 package com.lchen.ccdeploy.service;
 
-import com.google.common.collect.Lists;
 import com.lchen.ccdeploy.dao.DeploymentRepository;
 import com.lchen.ccdeploy.dao.JenkinsBuildHistoryRepository;
 import com.lchen.ccdeploy.model.DeploymentResult;
@@ -33,7 +32,8 @@ public class DeploymentService {
     }
 
     public List<DeploymentResult> listDeploymentResult(String context) {
-        return Lists.newArrayList();
+        List<DeploymentResult> deploymentResults = deploymentRepository.findTopTenByContext(context);
+        return deploymentResults.stream().map(DeploymentResult::buildResult).collect(toList());
     }
 
     public DeploymentVersion apply(JenkinsBuildHistory jenkinsBuildHistory) {

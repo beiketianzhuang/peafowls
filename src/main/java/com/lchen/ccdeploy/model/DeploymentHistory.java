@@ -1,7 +1,10 @@
 package com.lchen.ccdeploy.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -12,6 +15,8 @@ import javax.persistence.*;
 @Data
 @Entity
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "cc_deploy_history")
 public class DeploymentHistory {
 
@@ -23,5 +28,10 @@ public class DeploymentHistory {
 
     @Enumerated(EnumType.STRING)
     private DeploymentProcess status;
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "deployId",insertable = false,updatable = false)
+    private DeploymentResult result;
 
 }

@@ -81,15 +81,12 @@
                         sdsf
                     </el-col>
                     <el-col :span="8">
-                        <span>4版本部署日志</span>
+                        <span>{{deploymentHistories[0].id}}版本部署日志</span>
                         <div style="background-color: black;color: white;">
                             <br>
-                            部署开始<br>
-                            停止服务成功<br>
-                            删除旧包成功<br>
-                            拷贝12版本的包成功<br>
-                            启动服务成功<br>
-                            <span style="color: red;">部署失败</span><br>
+                            <div v-for="o in deploymentHistories[0].result.status" :key="o" class="text item">
+                                {{ o }}
+                            </div>
                             <br>
                         </div>
                     </el-col>
@@ -106,7 +103,7 @@
                             stripe
                             style="width: 100%">
                         <el-table-column
-                                prop="version"
+                                prop="id"
                                 label="部署版本"
                                 width="180">
                         </el-table-column>
@@ -120,12 +117,12 @@
                                 <el-badge is-dot class="item" :type="scope.row.result.badge">
                                 </el-badge>
                                 <el-link :underline="false" @click="deployProcess(scope.row.result.status)">
-                                    <span :style="{color:scope.row.result.color}">{{scope.row.result.status[7]}}</span>
+                                    <span :style="{color:scope.row.result.color}">{{scope.row.result.status[scope.row.result.status.length - 1]}}</span>
                                 </el-link>
                             </template>
                         </el-table-column>
                         <el-table-column
-                                prop="name"
+                                prop="username"
                                 label="操作人">
                         </el-table-column>
                         <el-table-column
@@ -174,7 +171,7 @@
                                 </div>
                             </div>
                             <div v-else>
-                                <el-button :type="scope.row.deployStatus" icon="el-icon-star-off" circle></el-button>
+                                <!--<el-button :type="scope.row.deployStatus" icon="el-icon-star-off" circle></el-button>-->
                             </div>
                         </template>
                     </el-table-column>
@@ -221,17 +218,7 @@
                 deployData: null,
                 deployVersion: null,
                 jenkinsBuilds: [],
-                deploymentHistories: [{
-                    "version": 1,
-                    "buildVersion": 87,
-                    "result": {
-                        "color": "green",
-                        "badge": "success",
-                        "status": ["部署开始", "停止服务成功", "删除旧包成功", "拷贝包成功", "服务启动成功", "服务验证中", "验证成功", "部署失败"]
-                    },
-                    "name": "陈朗",
-                    "createdAt": "2019-06-03"
-                }]
+                deploymentHistories: []
             }
         },
 
@@ -246,12 +233,12 @@
 
             },
             deploy() {
-                axios.post('/contexts/deploy/' + this.context+"?deployVersion="+this.deployVersion)
+                axios.post('/contexts/deploy/' + this.context + "?deployVersion=" + this.deployVersion)
                     .then((response) => {
                         this.dialogVisible = false
                     })
                     .catch(function (error) {
-
+                        this.dialogVisible = false
                     });
             },
             startBuild() {
@@ -301,6 +288,7 @@
             websocketonmessage(e) {
                 let resp = JSON.parse(e.data);
                 this.jenkinsBuilds = resp.jenkinsBuilds;
+                this.deploymentHistories = resp.deploymentHistories;
             },
             websocketclose(e) {
             }
