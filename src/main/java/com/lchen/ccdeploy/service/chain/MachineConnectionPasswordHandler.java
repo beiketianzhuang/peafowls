@@ -4,6 +4,7 @@ import ch.ethz.ssh2.Connection;
 import com.lchen.ccdeploy.dao.DeployPasswordRepository;
 import com.lchen.ccdeploy.dao.DeploymentRepository;
 import com.lchen.ccdeploy.model.DeployPassword;
+import com.lchen.ccdeploy.model.DeploymentProcess;
 import com.lchen.ccdeploy.model.DeploymentResult;
 import com.lchen.ccdeploy.model.constants.DeploymentStatus;
 import com.lchen.ccdeploy.service.DeploymentHistoryService;
@@ -55,16 +56,18 @@ public class MachineConnectionPasswordHandler extends MachineConnectionHandler {
             deploymentHistoryService.save(version, CONNECT_SUCCESS, result.getId());
         } catch (Exception e) {
             deploymentHistoryService.save(version, CONNECT_FAILED, result.getId());
+            updateDeployStatusByFailed(version, FAILED, result);
             log.error("连接服务失败:{}", e);
             return;
         }
         try {
             deploymentHistoryService.save(version, STOP_SERVICE_START, result.getId());
-//        RemoteCommandUtil.execute(con, String.format("cd /usr/projects/%s/; java -jar *.jar", version));
+            RemoteCommandUtil.execute(con, String.format("cd /usr/projects/%s/; java -jar *.jar", version));
             deploymentHistoryService.save(version, STOP_SERVICE_SUCCESS, result.getId());
             //停止旧服务
         } catch (Exception e) {
             deploymentHistoryService.save(version, STOP_SERVICE_FAILED, result.getId());
+            updateDeployStatusByFailed(version, FAILED, result);
             return;
         }
 
@@ -77,6 +80,7 @@ public class MachineConnectionPasswordHandler extends MachineConnectionHandler {
 
         } catch (Exception e) {
             deploymentHistoryService.save(version, DELETE_PACKAGE_FAILED, result.getId());
+            updateDeployStatusByFailed(version, FAILED, result);
             return;
         }
 
@@ -88,22 +92,28 @@ public class MachineConnectionPasswordHandler extends MachineConnectionHandler {
             deploymentHistoryService.save(version, COPY_PACKAGE_SUCCESS, result.getId());
         } catch (Exception e) {
             deploymentHistoryService.save(version, COPY_PACKAGE_FAILED, result.getId());
+            updateDeployStatusByFailed(version, FAILED, result);
             return;
         }
 
         try {
             deploymentHistoryService.save(version, SERVICE_RUN, result.getId());
-
             //部署
             RemoteCommandUtil.execute(con, "nohup java -jar *.jar");
             deploymentHistoryService.save(version, SERVICE_RUN_SUCCESS, result.getId());
-
         } catch (Exception e) {
             deploymentHistoryService.save(version, SERVICE_RUN_FAILED, result.getId());
+            updateDeployStatusByFailed(version, FAILED, result);
             return;
         }
 
         //todo 部署验证
 
+    }
+
+    private void updateDeployStatusByFailed(Integer version, DeploymentProcess process, DeploymentResult result) {
+        deploymentHistoryService.save(version, process, result.getId());
+        result.setDeployStatus(DeploymentStatus.FAILED);
+        deploymentRepository.saveAndFlush(result);
     }
 }

@@ -1,7 +1,7 @@
 package com.lchen.ccdeploy.config.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lchen.ccdeploy.service.DeployBuildThread;
+import com.lchen.ccdeploy.thread.DeployBuildThread;
 import com.lchen.ccdeploy.service.JenkinsHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

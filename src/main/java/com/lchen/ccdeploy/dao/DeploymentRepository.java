@@ -16,6 +16,6 @@ public interface DeploymentRepository extends JpaRepository<DeploymentResult, Lo
     @Query(value = "SELECT * FROM cc_deploy_result WHERE context=?1 AND build_version=?2 ORDER BY id DESC LIMIT 1", nativeQuery = true)
     Optional<DeploymentResult> findAllByContextCanDeployVersion(String context, Integer version);
 
-    @Query(value = "SELECT * FROM cc_deploy_result WHERE context = ?1 ORDER BY id DESC LIMIT 10",nativeQuery = true)
+    @Query(value = "SELECT * FROM cc_deploy_result WHERE context = ?1 ORDER BY id DESC LIMIT 10", nativeQuery = true)
     List<DeploymentResult> findTopTenByContext(String context);
 }

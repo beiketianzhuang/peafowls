@@ -1,9 +1,11 @@
-package com.lchen.ccdeploy.service;
+package com.lchen.ccdeploy.thread;
 
 import com.lchen.ccdeploy.config.handler.GlobalSession;
 import com.lchen.ccdeploy.model.DeploymentBuild;
 import com.lchen.ccdeploy.model.DeploymentResult;
 import com.lchen.ccdeploy.model.JenkinsBuild;
+import com.lchen.ccdeploy.service.DeploymentService;
+import com.lchen.ccdeploy.service.JenkinsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -28,7 +30,7 @@ public class DeployBuildThread {
     @Autowired
     private ApplicationContext applicationContext;
 
-    @Scheduled(fixedRate = 10 * 1000)
+    @Scheduled(fixedRate = 8 * 1000)
     public void pushAll() {
         Set<String> contexts = GlobalSession.getContextSessions().keySet();
         contexts.forEach(this::pushByContext);

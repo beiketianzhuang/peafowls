@@ -3,6 +3,7 @@ package com.lchen.ccdeploy.service;
 import com.lchen.ccdeploy.config.handler.GlobalSession;
 import com.lchen.ccdeploy.model.JenkinsBuildHistory;
 import com.lchen.ccdeploy.model.constants.JenkinsBuildStatus;
+import com.lchen.ccdeploy.thread.DeployBuildThread;
 import com.lchen.ccdeploy.utils.JenkinsClient;
 import com.offbytwo.jenkins.model.Build;
 import com.offbytwo.jenkins.model.BuildWithDetails;

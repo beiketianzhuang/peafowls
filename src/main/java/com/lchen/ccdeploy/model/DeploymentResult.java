@@ -1,5 +1,8 @@
 package com.lchen.ccdeploy.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.google.common.collect.Lists;
 import com.lchen.ccdeploy.model.constants.DeploymentStatus;
 import lombok.AllArgsConstructor;
@@ -39,7 +42,12 @@ public class DeploymentResult {
     @OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinColumn(name = "deployId", referencedColumnName = "id")
     private List<DeploymentHistory> deploymentHistories;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime createdAt;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime updatedAt;
 
     @Transient
@@ -73,8 +81,8 @@ public class DeploymentResult {
                     .collect(toList());
             return Result.builder()
                     .status(status)
-                    .color("green")
-                    .badge("success")
+                    .color(deploymentHistory.getStatus().getColor())
+                    .badge(deploymentHistory.getStatus().getBadge())
                     .build();
 
         }

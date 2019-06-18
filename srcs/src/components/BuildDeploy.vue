@@ -235,10 +235,10 @@
             deploy() {
                 axios.post('/contexts/deploy/' + this.context + "?deployVersion=" + this.deployVersion)
                     .then((response) => {
-                        this.dialogVisible = false
+                        this.dialogTableVisible = false
                     })
                     .catch(function (error) {
-                        this.dialogVisible = false
+                        this.dialogTableVisible = false
                     });
             },
             startBuild() {
