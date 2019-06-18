@@ -1,0 +1,40 @@
+package com.lchen.walleapiclient.builders;
+
+import com.google.common.base.Optional;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newHashMap;
+
+/**
+ * @author : lchen
+ * @date : 2019/6/18
+ */
+public final class BuilderDefault {
+    private BuilderDefault() {
+    }
+
+    public static <T> T defaultIfAbsent(T newValue, T defaultValue) {
+        return Optional.fromNullable(newValue)
+                .or(Optional.fromNullable(defaultValue))
+                .orNull();
+    }
+
+    public static <T> List<T> nullToEmptyList(Collection<T> newValue) {
+        if (newValue == null) {
+            return newArrayList();
+        }
+        return newArrayList(newValue);
+    }
+
+    public static <K, V> Map<K, V> nullToEmptyMap(Map<K, V> newValue) {
+        if (newValue == null) {
+            return newHashMap();
+        }
+        return newValue;
+    }
+
+}
