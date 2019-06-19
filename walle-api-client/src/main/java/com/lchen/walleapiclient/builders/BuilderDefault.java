@@ -37,4 +37,26 @@ public final class BuilderDefault {
         return newValue;
     }
 
+    public static <K, V> MapBuilder<K, V> asMapBuilder(Map<K, V> map) {
+        return new MapBuilder<>(map);
+    }
+
+    public static class MapBuilder<K, V> {
+
+        private Map<K, V> map;
+
+        MapBuilder(Map<K, V> map) {
+            this.map = map;
+        }
+
+        public MapBuilder<K, V> put(K k, V v) {
+            map.put(k, v);
+            return this;
+        }
+
+        public Map<K, V> build() {
+            return map;
+        }
+
+    }
 }
