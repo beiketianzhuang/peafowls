@@ -1,16 +1,15 @@
 package com.lchen.walleapiclient.handler;
 
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableList;
 import com.lchen.walleapiclient.provider.ApiRequestHandlerProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.List;
 
-import static com.google.common.collect.FluentIterable.from;
 import static com.lchen.walleapiclient.builders.BuilderDefault.nullToEmptyList;
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author : lchen
@@ -28,10 +27,10 @@ public class ApiBootstrapper implements SmartLifecycle {
 
     @Override
     public void start() {
-        ImmutableList<ApiRequestHandler> requestHandlers = from(nullToEmptyList(handlerProviders))
-                .transformAndConcat(handlers())
-                .toList();
-        System.out.println(requestHandlers);
+        List<ApiRequestHandler> apiRequestHandlers = nullToEmptyList(handlerProviders).stream()
+                .map(ApiRequestHandlerProvider::requestHandlers)
+                .flatMap(Collection::stream)
+                .collect(toList());
     }
 
     @Override
@@ -47,8 +46,5 @@ public class ApiBootstrapper implements SmartLifecycle {
     private void defaultContextBuilder() {
     }
 
-    private Function<ApiRequestHandlerProvider, ? extends Iterable<ApiRequestHandler>> handlers() {
-        return (Function<ApiRequestHandlerProvider, Iterable<ApiRequestHandler>>) input -> input.requestHandlers();
-    }
 
 }
