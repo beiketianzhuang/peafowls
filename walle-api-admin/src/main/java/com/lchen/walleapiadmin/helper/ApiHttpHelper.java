@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 import static java.lang.String.format;
+import static java.nio.charset.Charset.defaultCharset;
 import static java.util.Objects.nonNull;
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -63,10 +64,10 @@ public class ApiHttpHelper implements ApiHttpConnection {
             if (response.getStatusLine().getStatusCode() != SC_OK) {
                 responseContent = format(REQUEST_ERROR_MESSAGE, response.getStatusLine().getStatusCode());
                 if (response.getStatusLine().getStatusCode() == SC_MOVED_TEMPORARILY && nonNull(response.getFirstHeader(HEADER_LOCATION))) {
-                    responseContent += "；Redirect地址：" + response.getFirstHeader(HEADER_LOCATION).getValue();
+                    responseContent = responseContent.concat("；Redirect地址：" + response.getFirstHeader(HEADER_LOCATION).getValue());
                 }
             }
-            responseContent += EntityUtils.toString(entity, "UTF-8");
+            responseContent = responseContent.concat(EntityUtils.toString(entity, defaultCharset()));
             EntityUtils.consume(entity);
         } catch (Exception e) {
             log.error("获取返回信息失败", e);
