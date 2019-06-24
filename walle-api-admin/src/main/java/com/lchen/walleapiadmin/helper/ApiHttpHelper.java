@@ -14,10 +14,10 @@ import org.apache.http.util.EntityUtils;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Optional;
 
 import static java.lang.String.format;
 import static java.util.Objects.nonNull;
+import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.http.HttpStatus.SC_MOVED_TEMPORARILY;
 import static org.apache.http.HttpStatus.SC_OK;
@@ -42,11 +42,11 @@ public class ApiHttpHelper implements ApiHttpConnection {
             requestBase.setConfig(requestConfig);
             HttpResponse response = client.execute(requestBase);
             HttpEntity entity = response.getEntity();
-            apiResp = Optional.ofNullable(entity).map(e -> apiRespBuilder(e, response)).orElse(new ApiResp());
+            apiResp = ofNullable(entity).map(e -> apiRespBuilder(e, response)).orElse(new ApiResp());
         } catch (IOException e) {
             log.error("执行http请求失败", e);
         } finally {
-            closeConnection(requestBase, client);
+            closeAllConnection(requestBase, client);
         }
         return apiResp;
     }
@@ -74,16 +74,15 @@ public class ApiHttpHelper implements ApiHttpConnection {
         return ApiResp.builder().message(responseContent).status(response.getStatusLine().getStatusCode()).build();
     }
 
-    private void closeConnection(HttpRequestBase requestBase, CloseableHttpClient client) {
-        if (requestBase != null) {
-            requestBase.releaseConnection();
-        }
-        if (client != null) {
-            try {
-                client.close();
-            } catch (IOException e) {
-                log.error(e.getMessage(), e);
-            }
+    private void closeAllConnection(HttpRequestBase requestBase, CloseableHttpClient client) {
+        ofNullable(requestBase).ifPresent(HttpRequestBase::releaseConnection);
+        ofNullable(client).ifPresent(this::clientClose);
+    }
+
+    private void clientClose(CloseableHttpClient client) {
+        try {
+            client.close();
+        } catch (IOException ignored) {
         }
     }
 }
