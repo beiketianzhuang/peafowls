@@ -22,6 +22,10 @@
               <i class="el-icon-menu"></i>
               <router-link to="/monitor" slot="title"><span >应用监控中心</span></router-link>
             </el-menu-item>
+            <el-menu-item index="3">
+              <i class="el-icon-menu"></i>
+              <router-link to="/apiManager" slot="title"><span >API管理中心</span></router-link>
+            </el-menu-item>
           </el-menu>
         </el-col>
       </el-aside>

@@ -31,19 +31,29 @@
             </el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
-                    <el-button
-                            size="mini"
-                            @click="handleEdit(scope.$index, scope.row)">编辑
-                    </el-button>
-                    <router-link :to="'/deploy?context='+scope.row.context">
-                        <el-button size="mini">构建部署
-                        </el-button>
-                    </router-link>
-                    <el-button
-                            size="mini"
-                            type="danger"
-                            @click="handleDelete(scope.$index, scope.row)">删除
-                    </el-button>
+                    <div  style="padding: 8px">
+                        <i class="el-icon-edit" @click="handleEdit(scope.$index, scope.row)"></i>
+                        <el-tooltip class="item" effect="dark" content="构建部署" placement="right-end">
+                            <router-link :to="'/deploy?context='+scope.row.context">
+                                <i style="font-size: 20px" class="el-icon-s-promotion
+" @click="handleEdit(scope.$index, scope.row)"></i>
+                            </router-link>
+                        </el-tooltip>
+
+                        <!--<router-link :to="'/deploy?context='+scope.row.context">-->
+                        <!--<el-button size="mini">构建部署-->
+                        <!--</el-button>-->
+                        <!--</router-link>-->
+                        <i @click="handleDelete(scope.$index, scope.row)" class="el-icon-delete"></i>
+                        <span><i class="el-icon-more"></i></span>
+
+                        <!--<el-button-->
+                        <!--size="mini"-->
+                        <!--type="danger"-->
+                        <!--@click="handleDelete(scope.$index, scope.row)">删除-->
+                        <!--</el-button>-->
+                    </div>
+
                 </template>
             </el-table-column>
         </el-table>
