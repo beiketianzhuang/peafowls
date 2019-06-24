@@ -1,5 +1,6 @@
 package com.lchen.walleapiadmin.model;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -7,6 +8,7 @@ import lombok.Data;
  * @date : 2019/6/21
  */
 @Data
+@Builder
 public class RequestTag {
     private String key;
     private String value;
