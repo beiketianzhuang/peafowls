@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.lchen.walleapiadmin.model.ApiRunnerHistory;
 import com.lchen.walleapiadmin.model.RequestTag;
+import com.lchen.walleapiadmin.model.resp.ApiResp;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.ContentType;
 import org.junit.Test;
@@ -26,13 +27,13 @@ public class ApiHttpHelperTest {
     public void call() throws Exception {
         String s = mapper.writeValueAsString(Lists.newArrayList(1));
         ApiRunnerHistory history = ApiRunnerHistory.builder()
-                .requestUrl("http://localhost:7000/sqcs/message/have-read")
-                .requestParams(Lists.newArrayList(RequestTag.builder().key("ids").value(s).build()))
-                .requestHeaders(Lists.newArrayList(RequestTag.builder().key("Content-Type").value(ContentType.APPLICATION_JSON.toString()).build()))
+                .requestUrl("http://localhost:8082/contexts/deplo/demo")
+                .requestParams(Lists.newArrayList(RequestTag.builder().key("deployVersion").value(String.valueOf(1)).build()))
+//                .requestHeaders(Lists.newArrayList(RequestTag.builder().key("Content-Type").value(ContentType.APPLICATION_JSON.toString()).build()))
                 .method(HttpMethod.POST)
                 .build();
         HttpRequestBase requestBase = apiHttpHelper.buildHttpRequestBase(history);
-        String call = apiHttpHelper.call(requestBase);
-        System.out.println(call);
+        ApiResp apiResp = apiHttpHelper.call(requestBase);
+        System.out.println(apiResp);
     }
 }

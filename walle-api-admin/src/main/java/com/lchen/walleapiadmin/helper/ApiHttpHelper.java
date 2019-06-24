@@ -2,6 +2,7 @@ package com.lchen.walleapiadmin.helper;
 
 import com.lchen.walleapiadmin.model.ApiRunnerHistory;
 import com.lchen.walleapiadmin.model.constants.HttpMethodBase;
+import com.lchen.walleapiadmin.model.resp.ApiResp;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -13,14 +14,41 @@ import org.apache.http.util.EntityUtils;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Optional;
+
+import static java.lang.String.format;
+import static java.util.Objects.nonNull;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.http.HttpStatus.SC_MOVED_TEMPORARILY;
+import static org.apache.http.HttpStatus.SC_OK;
 
 @Slf4j
 @Component
 public class ApiHttpHelper implements ApiHttpConnection {
 
+    private static final String REQUEST_ERROR_MESSAGE = "请求状态异常：%d";
+    private static final String HEADER_LOCATION = "Location";
+
     @Override
     public void close() {
+    }
 
+    @Override
+    public ApiResp call(HttpRequestBase requestBase) {
+        ApiResp apiResp = new ApiResp();
+        CloseableHttpClient client = HttpClientBuilder.create().build();
+        try {
+            RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(5000).setConnectTimeout(5000).build();
+            requestBase.setConfig(requestConfig);
+            HttpResponse response = client.execute(requestBase);
+            HttpEntity entity = response.getEntity();
+            apiResp = Optional.ofNullable(entity).map(e -> apiRespBuilder(e, response)).orElse(new ApiResp());
+        } catch (IOException e) {
+            log.error("执行http请求失败", e);
+        } finally {
+            closeConnection(requestBase, client);
+        }
+        return apiResp;
     }
 
     public HttpRequestBase buildHttpRequestBase(ApiRunnerHistory apiRunnerHistory) {
@@ -29,35 +57,21 @@ public class ApiHttpHelper implements ApiHttpConnection {
                 .apply(apiRunnerHistory.getRequestUrl(), apiRunnerHistory.getRequestParams(), apiRunnerHistory.getRequestHeaders());
     }
 
-    @Override
-    public String call(HttpRequestBase requestBase) {
-        String responseContent = "";
-        CloseableHttpClient client = HttpClientBuilder.create().build();
+    private ApiResp apiRespBuilder(HttpEntity entity, HttpResponse response) {
+        String responseContent = EMPTY;
         try {
-            RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(5000).setConnectTimeout(5000).build();
-            requestBase.setConfig(requestConfig);
-            HttpResponse response = client.execute(requestBase);
-            HttpEntity entity = response.getEntity();
-            if (null != entity) {
-                int statusCode = response.getStatusLine().getStatusCode();
-                if (statusCode == 200) {
-                    responseContent = EntityUtils.toString(entity, "UTF-8");
-                } else {
-                    responseContent = "请求状态异常：" + response.getStatusLine().getStatusCode();
-                    if (statusCode == 302 && response.getFirstHeader("Location") != null) {
-                        responseContent += "；Redirect地址：" + response.getFirstHeader("Location").getValue();
-                    }
-
+            if (response.getStatusLine().getStatusCode() != SC_OK) {
+                responseContent = format(REQUEST_ERROR_MESSAGE, response.getStatusLine().getStatusCode());
+                if (response.getStatusLine().getStatusCode() == SC_MOVED_TEMPORARILY && nonNull(response.getFirstHeader(HEADER_LOCATION))) {
+                    responseContent += "；Redirect地址：" + response.getFirstHeader(HEADER_LOCATION).getValue();
                 }
-                EntityUtils.consume(entity);
             }
-            log.info("http statusCode error, statusCode:" + response.getStatusLine().getStatusCode());
+            responseContent += EntityUtils.toString(entity, "UTF-8");
+            EntityUtils.consume(entity);
         } catch (Exception e) {
-        } finally {
-            closeConnection(requestBase, client);
+            log.error("获取返回信息失败", e);
         }
-
-        return responseContent;
+        return ApiResp.builder().message(responseContent).status(response.getStatusLine().getStatusCode()).build();
     }
 
     private void closeConnection(HttpRequestBase requestBase, CloseableHttpClient client) {

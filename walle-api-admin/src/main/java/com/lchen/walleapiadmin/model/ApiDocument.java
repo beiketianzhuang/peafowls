@@ -15,7 +15,6 @@ import static javax.persistence.EnumType.STRING;
  * @date : 2019/6/21
  */
 @Data
-@Entity
 @Builder
 public class ApiDocument extends BaseDomain {
 

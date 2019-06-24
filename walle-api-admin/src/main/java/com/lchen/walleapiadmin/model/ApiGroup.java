@@ -14,7 +14,6 @@ import static javax.persistence.GenerationType.IDENTITY;
  * @date : 2019/6/21
  */
 @Data
-@Entity
 @Builder
 public class ApiGroup extends BaseDomain {
 

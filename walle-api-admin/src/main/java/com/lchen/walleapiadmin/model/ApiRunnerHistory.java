@@ -1,6 +1,7 @@
 package com.lchen.walleapiadmin.model;
 
 import com.lchen.walleapiadmin.model.constants.PreserveType;
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -15,7 +16,7 @@ import static javax.persistence.EnumType.STRING;
  * @date : 2019/6/21
  */
 @Data
-@Entity
+@Builder
 public class ApiRunnerHistory extends BaseDomain {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
