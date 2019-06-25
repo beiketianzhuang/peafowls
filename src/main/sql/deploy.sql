@@ -1,206 +1,134 @@
-create table TAXLOAN_APPLY
-(
-  apply_id                      NUMBER(20) not null,
-  org_code                      VARCHAR2(20) not null,
-  mer_id                        NUMBER,
-  apply_no                      VARCHAR2(40),
-  cert_type                     VARCHAR2(1),
-  cert_code                     VARCHAR2(20),
-  cust_name                     VARCHAR2(60),
-  cert_org                      VARCHAR2(62),
-  rel_addr                      VARCHAR2(300),
-  rel_post_code                 VARCHAR2(6),
-  email                         VARCHAR2(60),
-  cust_mobile                   VARCHAR2(15),
-  edu_level                     VARCHAR2(1),
-  live_status                   VARCHAR2(1),
-  live_addr                     VARCHAR2(186),
-  live_post_code                VARCHAR2(6),
-  marr_status                   VARCHAR2(2),
-  spouse_name                   VARCHAR2(60),
-  spouse_cert_type              VARCHAR2(1),
-  spouse_cert_code              VARCHAR2(20),
-  cust_mobile_real              VARCHAR2(15),
-  loan_purpose                  VARCHAR2(1) default '1',
-  repay_bank_name               VARCHAR2(100),
-  repay_acc_no                  VARCHAR2(20),
-  inner_apply_status            VARCHAR2(2) default '00',
-  tax_data                      VARCHAR2(1),
-  create_time                   DATE,
-  update_time                   DATE,
-  appoint_time                  DATE,
-  org_rule_filepath             VARCHAR2(200),
-  org_capital_report_filepath   VARCHAR2(200),
-  org_financial_report_filepath VARCHAR2(200),
-  org_tax_dec_filepath          VARCHAR2(200),
-  org_credit_report_filepath    VARCHAR2(200),
-  org_bank_statement_filepath   VARCHAR2(200),
-  remark1                       VARCHAR2(200),
-  remark2                       VARCHAR2(200),
-  remark3                       VARCHAR2(200),
-  remark4                       VARCHAR2(200),
-  mer_apply_status              VARCHAR2(2) default '00',
-  mer_apply_user                VARCHAR2(100),
-  inner_apply_user              VARCHAR2(100),
-  mer_apply_time                DATE,
-  inner_apply_time              DATE,
-  inner_apply_desc              VARCHAR2(200),
-  mer_apply_desc                VARCHAR2(200)
-)
+/*
+SQLyog Ultimate v12.09 (64 bit)
+MySQL - 5.7.26 : Database - cc-deploy
+*********************************************************************
+*/
 
-create table TAXLOAN_ORDER
-(
-  id               NUMBER not null,
-  order_no         VARCHAR2(30),
-  apply_id         NUMBER(20),
-  mer_contr_no     NUMBER(20),
-  org_code         VARCHAR2(20),
-  user_id          NUMBER,
-  order_amt        VARCHAR2(17),
-  order_total_fee  VARCHAR2(17),
-  order_status     VARCHAR2(2),
-  fee_status       VARCHAR2(2),
-  order_rate       VARCHAR2(17),
-  eplat_fee_amt    VARCHAR2(17),
-  eplat_fee_rate   VARCHAR2(17),
-  mer_fee_amt      VARCHAR2(17),
-  mer_fee_rate     VARCHAR2(17),
-  gua_info         VARCHAR2(100),
-  repay_type       VARCHAR2(2),
-  rec_status       VARCHAR2(1),
-  fk_upload_status VARCHAR2(1),
-  create_time      DATE,
-  update_time      DATE,
-  mer_input_time   DATE,
-  eplat_input_time DATE,
-  repay_time       DATE
-)
+/*!40101 SET NAMES utf8 */;
 
+/*!40101 SET SQL_MODE=''*/;
 
-create table TAXLOAN_ORG_DATAMONTH
-(
-  id         NUMBER not null,
-  org_code   VARCHAR2(18),
-  data_month VARCHAR2(12),
-  sum_cnt    VARCHAR2(10),
-  sum_sum    VARCHAR2(15)
-)
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/`cc-deploy` /*!40100 DEFAULT CHARACTER SET utf8 */;
 
--- Create table
-create table PEPP_FRM.SMC_ORG
-(
-  org_id                    NUMBER(20) not null,
-  org_code                  VARCHAR2(100),
-  org_customs_code          VARCHAR2(100),
-  master_customs_code       VARCHAR2(32),
-  org_name                  VARCHAR2(128) not null,
-  short_name                VARCHAR2(128),
-  eng_name                  VARCHAR2(128),
-  reg_country               VARCHAR2(5),
-  loc_country               VARCHAR2(5),
-  agrt_no                   VARCHAR2(32),
-  corporation               VARCHAR2(64),
-  zip                       VARCHAR2(32),
-  address                   VARCHAR2(255),
-  fax                       VARCHAR2(64),
-  linkman                   VARCHAR2(64),
-  phone                     VARCHAR2(32),
-  email                     VARCHAR2(64),
-  create_time               DATE,
-  update_time               DATE,
-  org_type                  VARCHAR2(2),
-  taxy_reg_no               VARCHAR2(100),
-  title                     VARCHAR2(32),
-  status                    VARCHAR2(1) default 1,
-  supplement1               VARCHAR2(256),
-  supplement2               VARCHAR2(256),
-  supplement3               VARCHAR2(256),
-  customer_code             VARCHAR2(16),
-  duty_scope                VARCHAR2(512),
-  duty_type                 VARCHAR2(128),
-  lawman                    VARCHAR2(100),
-  lawman_passtype           VARCHAR2(4),
-  lawman_passcode           VARCHAR2(256),
-  duty_license              BLOB,
-  org_license               BLOB,
-  audit_user                VARCHAR2(100),
-  taxy_reg_license          BLOB,
-  law_man_license           BLOB,
-  approvaled_status         VARCHAR2(1) default '0',
-  approvaled_notes          VARCHAR2(32),
-  approvaled_date           DATE,
-  license                   VARCHAR2(255),
-  org_license_file          VARCHAR2(255),
-  taxy_reg_license_file     VARCHAR2(255),
-  lawman_idcode_up          VARCHAR2(255),
-  eims_sync_flag            VARCHAR2(1) default 2,
-  from_sys_code             VARCHAR2(10) default 'EPLAT00',
-  belong_custom_code        VARCHAR2(32),
-  ebs_org_name              VARCHAR2(128),
-  ebs_taxy_reg_no           VARCHAR2(100),
-  ebs_org_phone             VARCHAR2(100),
-  ebs_org_account           VARCHAR2(255),
-  ebs_tax_payer             NUMBER(1),
-  reg_address               VARCHAR2(255),
-  mobile_phone              VARCHAR2(100),
-  ebs_org_branch            VARCHAR2(255),
-  update_user_name          VARCHAR2(64),
-  update_user_type          VARCHAR2(10),
-  update_user_id            NUMBER(20),
-  ebs_update_time           DATE default to_date('2012-08-01','YYYY-MM-DD'),
-  actuld_protocol_scanner1  VARCHAR2(64),
-  actuld_protocol_scanner2  VARCHAR2(64),
-  actuld_protocol_scanner3  VARCHAR2(64),
-  actuld_protocol_scanner4  VARCHAR2(64),
-  actuld_other_proof1       VARCHAR2(64),
-  actuld_other_proof2       VARCHAR2(64),
-  actuld_other_proof3       VARCHAR2(64),
-  actuld_other_proof4       VARCHAR2(64),
-  actuld_protocol_scanner5  VARCHAR2(64),
-  actuld_protocol_scanner6  VARCHAR2(64),
-  actuld_other_proof5       VARCHAR2(64),
-  actuld_other_proof6       VARCHAR2(64),
-  credit_code               VARCHAR2(64),
-  province                  VARCHAR2(64),
-  city                      VARCHAR2(64),
-  licence_start_time        DATE,
-  lawman_idcode_start_time  DATE,
-  licence_finish_time       DATE,
-  lawman_idcode_finish_time DATE,
-  check_result              VARCHAR2(12),
-  lawman_idcode_con         VARCHAR2(255),
-  realname_other_proof1     VARCHAR2(64),
-  realname_other_proof2     VARCHAR2(64),
-  realname_other_proof3     VARCHAR2(64),
-  realname_other_proof4     VARCHAR2(64),
-  realname_other_proof5     VARCHAR2(64),
-  realname_other_proof6     VARCHAR2(64),
-  realname_other_proof7     VARCHAR2(64),
-  realname_other_proof8     VARCHAR2(64),
-  realname_other_proof9     VARCHAR2(64),
-  duty_license_file         VARCHAR2(255),
-  law_man_license_file      VARCHAR2(255),
-  step                      VARCHAR2(32) default 1 not null,
-  is_card_org               VARCHAR2(2) default 0,
-  des_flag                  NUMBER default 0,
-  capital                   NUMBER(16,2) default 0,
-  agent_user_name           VARCHAR2(32),
-  agent_user_cellphone      VARCHAR2(11),
-  agent_user_email          VARCHAR2(32),
-  agent_user_idcode_up      VARCHAR2(255),
-  agent_user_idcode_con     VARCHAR2(255),
-  branch_open_file          VARCHAR2(255),
-  agent_id_code             VARCHAR2(32),
-  agent_id_type             VARCHAR2(2) default 01,
-  agent_id_start_time       DATE,
-  agent_id_end_time         DATE,
-  org_score_syncdata_time   DATE,
-  org_score_time            DATE,
-  org_score                 NUMBER(22,2),
-  org_score_desc            VARCHAR2(2000),
-  org_level                 VARCHAR2(1),
-  is_score                  NUMBER(1) default '0',
-  b2b_type                  VARCHAR2(2),
-  final_approval_apply_time DATE,
-  last_patch_time           DATE
-)
+USE `cc-deploy`;
+
+/*Table structure for table `cc_deploy_code` */
+
+DROP TABLE IF EXISTS `cc_deploy_code`;
+
+CREATE TABLE `cc_deploy_code` (
+  `id` bigint(11) unsigned NOT NULL AUTO_INCREMENT,
+  `context_id` bigint(11) NOT NULL,
+  `code_url` varchar(50) NOT NULL,
+  `repository_type` varchar(50) DEFAULT NULL,
+  `branch` varchar(50) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*Data for the table `cc_deploy_code` */
+
+/*Table structure for table `cc_deploy_context` */
+
+DROP TABLE IF EXISTS `cc_deploy_context`;
+
+CREATE TABLE `cc_deploy_context` (
+  `id` bigint(11) unsigned NOT NULL AUTO_INCREMENT,
+  `context` varchar(100) NOT NULL,
+  `context_type` varchar(50) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+/*Data for the table `cc_deploy_context` */
+
+insert  into `cc_deploy_context`(`id`,`context`,`context_type`,`created_at`,`updated_at`) values (1,'demo','SPRINGBOOT','2019-06-12 19:26:11','2019-06-12 19:26:11');
+
+/*Table structure for table `cc_deploy_history` */
+
+DROP TABLE IF EXISTS `cc_deploy_history`;
+
+CREATE TABLE `cc_deploy_history` (
+  `id` bigint(11) unsigned NOT NULL AUTO_INCREMENT,
+  `deploy_id` bigint(11) NOT NULL,
+  `build_version` int(11) NOT NULL,
+  `status` varchar(50) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=utf8;
+
+/*Data for the table `cc_deploy_history` */
+
+insert  into `cc_deploy_history`(`id`,`deploy_id`,`build_version`,`status`,`created_at`,`updated_at`) values (5,5,88,'DELETE_PACKAGE_START','2019-06-12 20:48:17','2019-06-12 20:48:17'),(6,5,88,'DELETE_PACKAGE_FAILED','2019-06-12 20:48:17','2019-06-12 20:48:17'),(7,6,88,'CONNECT_START','2019-06-12 20:48:55','2019-06-12 20:48:55'),(8,6,88,'CONNECT_START','2019-06-12 20:48:56','2019-06-12 20:48:56'),(9,6,88,'STOP_SERVICE_START','2019-06-12 20:48:56','2019-06-12 20:48:56'),(10,6,88,'STOP_SERVICE_SUCCESS','2019-06-12 20:48:56','2019-06-12 20:48:56'),(11,6,88,'DELETE_PACKAGE_START','2019-06-12 20:48:56','2019-06-12 20:48:56'),(12,6,88,'DELETE_PACKAGE_FAILED','2019-06-12 20:48:56','2019-06-12 20:48:56'),(13,7,88,'CONNECT_START','2019-06-14 22:04:50','2019-06-14 22:04:50'),(14,7,88,'CONNECT_SUCCESS','2019-06-14 22:04:51','2019-06-14 22:04:51'),(15,7,88,'STOP_SERVICE_START','2019-06-14 22:04:51','2019-06-14 22:04:51'),(16,7,88,'STOP_SERVICE_SUCCESS','2019-06-14 22:04:51','2019-06-14 22:04:51'),(17,7,88,'DELETE_PACKAGE_START','2019-06-14 22:04:51','2019-06-14 22:04:51'),(18,7,88,'DELETE_PACKAGE_FAILED','2019-06-14 22:04:51','2019-06-14 22:04:51'),(19,8,88,'CONNECT_START','2019-06-14 22:06:25','2019-06-14 22:06:25'),(20,8,88,'CONNECT_SUCCESS','2019-06-14 22:06:51','2019-06-14 22:06:51'),(21,8,88,'STOP_SERVICE_START','2019-06-14 22:06:51','2019-06-14 22:06:51'),(22,8,88,'STOP_SERVICE_SUCCESS','2019-06-14 22:06:51','2019-06-14 22:06:51'),(23,8,88,'DELETE_PACKAGE_START','2019-06-14 22:06:52','2019-06-14 22:06:52'),(24,8,88,'DELETE_PACKAGE_FAILED','2019-06-14 22:06:52','2019-06-14 22:06:52'),(25,9,88,'CONNECT_START','2019-06-14 22:09:49','2019-06-14 22:09:49'),(26,9,88,'CONNECT_FAILED','2019-06-14 22:09:50','2019-06-14 22:09:50'),(27,10,88,'CONNECT_START','2019-06-14 23:34:42','2019-06-14 23:34:42'),(28,10,88,'CONNECT_FAILED','2019-06-14 23:34:43','2019-06-14 23:34:43'),(29,11,88,'CONNECT_START','2019-06-14 23:45:28','2019-06-14 23:45:28'),(30,11,88,'CONNECT_FAILED','2019-06-14 23:45:29','2019-06-14 23:45:29'),(31,12,88,'CONNECT_START','2019-06-14 23:53:51','2019-06-14 23:53:51'),(32,12,88,'CONNECT_FAILED','2019-06-14 23:53:52','2019-06-14 23:53:52'),(33,13,88,'CONNECT_START','2019-06-14 23:54:12','2019-06-14 23:54:12'),(34,13,88,'CONNECT_FAILED','2019-06-14 23:54:13','2019-06-14 23:54:13'),(35,14,88,'CONNECT_START','2019-06-14 23:55:11','2019-06-14 23:55:11'),(36,14,88,'CONNECT_FAILED','2019-06-14 23:55:12','2019-06-14 23:55:12'),(37,15,88,'CONNECT_START','2019-06-14 23:55:17','2019-06-14 23:55:17'),(38,15,88,'CONNECT_FAILED','2019-06-14 23:55:18','2019-06-14 23:55:18'),(39,16,88,'CONNECT_START','2019-06-14 23:56:50','2019-06-14 23:56:50'),(40,16,88,'CONNECT_FAILED','2019-06-14 23:56:51','2019-06-14 23:56:51'),(41,17,88,'CONNECT_START','2019-06-15 18:59:53','2019-06-15 18:59:53'),(42,17,88,'CONNECT_FAILED','2019-06-15 18:59:55','2019-06-15 18:59:55'),(43,17,88,'FAILED','2019-06-15 18:59:55','2019-06-15 18:59:55'),(44,18,88,'CONNECT_START','2019-06-15 19:26:44','2019-06-15 19:26:44'),(45,18,88,'CONNECT_FAILED','2019-06-15 19:26:45','2019-06-15 19:26:45'),(46,18,88,'FAILED','2019-06-15 19:26:45','2019-06-15 19:26:45'),(47,19,88,'CONNECT_START','2019-06-15 19:28:03','2019-06-15 19:28:03'),(48,19,88,'CONNECT_FAILED','2019-06-15 19:28:04','2019-06-15 19:28:04'),(49,19,88,'FAILED','2019-06-15 19:28:04','2019-06-15 19:28:04'),(50,20,88,'CONNECT_START','2019-06-15 19:28:12','2019-06-15 19:28:12'),(51,20,88,'CONNECT_FAILED','2019-06-15 19:28:13','2019-06-15 19:28:13'),(52,20,88,'FAILED','2019-06-15 19:28:13','2019-06-15 19:28:13'),(53,21,88,'CONNECT_START','2019-06-15 19:36:54','2019-06-15 19:36:54'),(54,21,88,'CONNECT_FAILED','2019-06-15 19:36:55','2019-06-15 19:36:55'),(55,21,88,'FAILED','2019-06-15 19:36:55','2019-06-15 19:36:55'),(56,22,1,'CONNECT_START','2019-06-24 19:53:46','2019-06-24 19:53:46'),(57,22,1,'CONNECT_FAILED','2019-06-24 19:53:47','2019-06-24 19:53:47'),(58,22,1,'FAILED','2019-06-24 19:53:47','2019-06-24 19:53:47'),(59,23,1,'CONNECT_START','2019-06-24 20:34:20','2019-06-24 20:34:20'),(60,23,1,'CONNECT_FAILED','2019-06-24 20:34:21','2019-06-24 20:34:21'),(61,23,1,'FAILED','2019-06-24 20:34:21','2019-06-24 20:34:21'),(62,24,1,'CONNECT_START','2019-06-24 20:39:30','2019-06-24 20:39:30'),(63,24,1,'CONNECT_FAILED','2019-06-24 20:39:31','2019-06-24 20:39:31'),(64,24,1,'FAILED','2019-06-24 20:39:31','2019-06-24 20:39:31');
+
+/*Table structure for table `cc_deploy_jenkins_history` */
+
+DROP TABLE IF EXISTS `cc_deploy_jenkins_history`;
+
+CREATE TABLE `cc_deploy_jenkins_history` (
+  `id` bigint(11) unsigned NOT NULL AUTO_INCREMENT,
+  `version` int(11) NOT NULL,
+  `code_change` text,
+  `job_name` varchar(100) NOT NULL,
+  `build_status` varchar(50) NOT NULL,
+  `build_time` int(11) DEFAULT '0',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=66 DEFAULT CHARSET=utf8;
+
+/*Data for the table `cc_deploy_jenkins_history` */
+
+insert  into `cc_deploy_jenkins_history`(`id`,`version`,`code_change`,`job_name`,`build_status`,`build_time`,`created_at`,`updated_at`) values (22,50,'','demo','FAILURE',68388,'2019-06-02 10:24:40','2019-06-02 10:24:40'),(23,51,'','demo','SUCCESS',77886,'2019-06-02 10:26:58','2019-06-02 10:26:58'),(24,52,'','demo','ABORTED',76758,'2019-06-02 10:36:28','2019-06-02 10:36:28'),(25,53,'','demo','SUCCESS',70354,'2019-06-02 10:48:56','2019-06-02 10:48:56'),(26,54,'','demo','SUCCESS',73478,'2019-06-02 10:51:36','2019-06-02 10:51:36'),(27,55,'','demo','SUCCESS',135489,'2019-06-02 10:56:26','2019-06-02 10:56:26'),(28,56,'','demo','SUCCESS',65237,'2019-06-02 11:01:27','2019-06-02 11:01:27'),(29,57,'','demo','SUCCESS',70834,'2019-06-02 11:04:11','2019-06-02 11:04:11'),(30,58,'','demo','SUCCESS',70081,'2019-06-02 11:10:28','2019-06-02 11:10:28'),(31,59,'','demo','SUCCESS',69460,'2019-06-02 11:12:04','2019-06-02 11:12:04'),(32,60,'','demo','SUCCESS',73894,'2019-06-02 11:53:10','2019-06-02 11:53:10'),(33,61,'','demo','SUCCESS',80030,'2019-06-02 11:56:07','2019-06-02 11:56:07'),(34,62,'','demo','SUCCESS',77070,'2019-06-02 11:57:00','2019-06-02 11:57:00'),(35,63,'','demo','SUCCESS',66411,'2019-06-02 12:01:05','2019-06-02 12:01:05'),(36,64,'','demo','SUCCESS',73323,'2019-06-02 12:10:44','2019-06-02 12:10:44'),(37,65,NULL,'demo','SUCCESS',78851,'2019-06-02 12:11:04','2019-06-02 12:11:04'),(38,66,NULL,'demo','SUCCESS',80877,'2019-06-02 12:12:01','2019-06-02 12:12:01'),(39,67,NULL,'demo','SUCCESS',76590,'2019-06-02 12:12:48','2019-06-02 12:12:48'),(40,68,NULL,'demo','SUCCESS',88122,'2019-06-02 12:14:21','2019-06-02 12:14:21'),(41,69,NULL,'demo','SUCCESS',88403,'2019-06-02 12:15:20','2019-06-02 12:15:20'),(42,70,NULL,'demo','SUCCESS',82435,'2019-06-02 12:16:51','2019-06-02 12:16:51'),(44,71,NULL,'demo','SUCCESS',115128,'2019-06-02 17:07:52','2019-06-02 17:07:52'),(45,72,NULL,'demo','SUCCESS',174918,'2019-06-02 17:11:10','2019-06-02 17:11:10'),(46,73,NULL,'demo','SUCCESS',107106,'2019-06-02 17:15:49','2019-06-02 17:15:49'),(47,74,NULL,'demo','SUCCESS',98111,'2019-06-02 17:18:53','2019-06-02 17:18:53'),(48,75,NULL,'demo','SUCCESS',97068,'2019-06-02 17:20:21','2019-06-02 17:20:21'),(49,76,NULL,'demo','SUCCESS',71507,'2019-06-02 17:24:02','2019-06-02 17:24:02'),(50,77,NULL,'demo','SUCCESS',65847,'2019-06-02 17:34:07','2019-06-02 17:34:07'),(51,78,NULL,'demo','SUCCESS',70640,'2019-06-02 17:45:27','2019-06-02 17:45:27'),(52,79,NULL,'demo','SUCCESS',97989,'2019-06-02 17:58:55','2019-06-02 17:58:55'),(53,80,NULL,'demo','SUCCESS',86392,'2019-06-02 18:03:52','2019-06-02 18:03:52'),(54,81,NULL,'demo','SUCCESS',69344,'2019-06-02 18:05:35','2019-06-02 18:05:35'),(55,82,NULL,'demo','SUCCESS',74374,'2019-06-02 18:08:07','2019-06-02 18:08:07'),(56,83,NULL,'demo','SUCCESS',72579,'2019-06-02 18:19:02','2019-06-02 18:19:02'),(57,84,NULL,'demo','SUCCESS',70231,'2019-06-02 18:19:26','2019-06-02 18:19:26'),(58,85,NULL,'demo','SUCCESS',70866,'2019-06-02 18:22:24','2019-06-02 18:22:24'),(59,86,NULL,'demo','UNSTABLE',25384,'2019-06-02 18:31:37','2019-06-02 18:31:37'),(60,87,NULL,'demo','UNSTABLE',28450,'2019-06-03 21:17:12','2019-06-03 21:17:12'),(61,88,NULL,'demo','UNSTABLE',28342,'2019-06-03 21:29:15','2019-06-03 21:29:15'),(62,89,NULL,'demo','UNSTABLE',22806,'2019-06-04 20:07:54','2019-06-04 20:07:54'),(63,90,NULL,'demo','UNSTABLE',23892,'2019-06-04 21:28:44','2019-06-04 21:28:44'),(64,91,'','demo','UNSTABLE',22962,'2019-06-04 21:36:27','2019-06-04 21:36:27'),(65,92,NULL,'demo','UNSTABLE',20778,'2019-06-04 21:36:39','2019-06-04 21:36:39');
+
+/*Table structure for table `cc_deploy_pwd` */
+
+DROP TABLE IF EXISTS `cc_deploy_pwd`;
+
+CREATE TABLE `cc_deploy_pwd` (
+  `id` bigint(11) unsigned NOT NULL AUTO_INCREMENT,
+  `context` varchar(100) NOT NULL,
+  `ip` varchar(50) NOT NULL,
+  `username` varchar(50) NOT NULL,
+  `password` varchar(50) NOT NULL,
+  `env` varchar(50) NOT NULL,
+  `port` int(11) NOT NULL DEFAULT '22',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+/*Data for the table `cc_deploy_pwd` */
+
+insert  into `cc_deploy_pwd`(`id`,`context`,`ip`,`username`,`password`,`env`,`port`,`created_at`,`updated_at`) values (1,'demo','127.0.0.1','root','Ww4544989.','DEV',22,'2019-06-12 19:31:10','2019-06-12 19:32:58');
+
+/*Table structure for table `cc_deploy_result` */
+
+DROP TABLE IF EXISTS `cc_deploy_result`;
+
+CREATE TABLE `cc_deploy_result` (
+  `id` bigint(11) unsigned NOT NULL AUTO_INCREMENT,
+  `context` varchar(100) NOT NULL,
+  `deploy_status` varchar(50) NOT NULL,
+  `build_version` int(11) NOT NULL,
+  `username` varchar(100) DEFAULT '陈朗',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8;
+
+/*Data for the table `cc_deploy_result` */
+
+insert  into `cc_deploy_result`(`id`,`context`,`deploy_status`,`build_version`,`username`,`created_at`,`updated_at`) values (17,'demo','FAILED',88,NULL,'2019-06-15 18:59:55','2019-06-15 18:59:55'),(18,'demo','FAILED',88,NULL,'2019-06-15 19:26:45','2019-06-15 19:26:45'),(19,'demo','FAILED',88,NULL,'2019-06-15 19:28:04','2019-06-15 19:28:04'),(20,'demo','FAILED',88,NULL,'2019-06-15 19:28:13','2019-06-15 19:28:13'),(21,'demo','FAILED',88,NULL,'2019-06-15 19:36:55','2019-06-15 19:36:55'),(22,'demo','FAILED',1,NULL,'2019-06-24 19:53:47','2019-06-24 19:53:47'),(23,'demo','FAILED',1,NULL,'2019-06-24 20:34:21','2019-06-24 20:34:21'),(24,'demo','FAILED',1,NULL,'2019-06-24 20:39:31','2019-06-24 20:39:31');
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
