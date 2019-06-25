@@ -2,6 +2,7 @@ import BuildDeploy from '../components/BuildDeploy';
 import ContextList from '../components/ContextList';
 import ContextMonitor from '../components/ContextMonitor';
 import ApiManager from '../components/ApiManager';
+import ApiDetails from '../components/ApiDetails';
 
 const routers = [{
     path: '/',
@@ -15,5 +16,8 @@ const routers = [{
 }, {
     path: '/apiManager',
     component: ApiManager
+}, {
+    path: '/apiDetails',
+    component: ApiDetails
 }];
 export default routers;
