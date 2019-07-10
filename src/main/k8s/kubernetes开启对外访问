@@ -1,0 +1,2 @@
+kubernetes开启对外访问
+kubectl proxy --address='172.17.32.7' --accept-hosts='^*$' --port=8080
