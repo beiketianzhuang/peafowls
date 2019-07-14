@@ -61,133 +61,151 @@
                 </el-table-column>
             </el-table>
         </el-card>
-        <el-card class="box-card" style="margin-top: 20px">
-            <div slot="header" class="clearfix">
-                <span>部署</span>
-                <el-button style="float: right; padding: 3px 0" type="text" @click="selectDeployVersion">立即部署
-                </el-button>
-                <el-button style="float: right; padding: 3px 10px" type="text" @click="selectDeployVersion">重启
-                </el-button>
-            </div>
-            <el-card style="height: 300px" shadow="hover">
+        <div v-if="deployType == 'CONTAINER'">
+            <el-card class="box-card" style="margin-top: 20px">
                 <div slot="header" class="clearfix">
-                    <span>运行状况</span>
+                    <span>应用部署</span>
+                    <el-button style="float: right; padding: 3px 0" type="text">一键部署</el-button>
                 </div>
-                <el-row :gutter="20">
-                    <el-col :span="8">
-                        <span>正在部署版本为<span style="color: green;font-size: 30px">#12</span>的包</span>
-                    </el-col>
-                    <el-col :span="8">
-                        sdsf
-                    </el-col>
-                    <el-col :span="8">
-                        <span>{{deploymentHistories[0].id}}版本部署日志</span>
-                        <div style="background-color: black;color: white;">
-                            <br>
-                            <div v-for="o in deploymentHistories[0].result.status" :key="o" class="text item">
-                                {{ o }}
-                            </div>
-                            <br>
-                        </div>
-                    </el-col>
-                </el-row>
-
+                <div v-for="o in 4" :key="o" class="text item">
+                    <el-progress type="circle" :percentage="100" status="success" width="120"></el-progress>
+                    <span>{{o}}</span>
+                </div>
             </el-card>
-            <el-card style="margin-top: 20px" shadow="hover">
+            <el-card class="box-card" style="margin-top: 20px">
                 <div slot="header" class="clearfix">
                     <span>部署历史</span>
                 </div>
-                <template>
+            </el-card>
+        </div>
+        <div v-if="deployType == 'LINUX'">
+            <el-card class="box-card" style="margin-top: 20px">
+                <div slot="header" class="clearfix">
+                    <span>部署</span>
+                    <el-button style="float: right; padding: 3px 0" type="text" @click="selectDeployVersion">立即部署
+                    </el-button>
+                    <el-button style="float: right; padding: 3px 10px" type="text" @click="selectDeployVersion">重启
+                    </el-button>
+                </div>
+                <el-card style="height: 300px" shadow="hover">
+                    <div slot="header" class="clearfix">
+                        <span>运行状况</span>
+                    </div>
+                    <el-row :gutter="20">
+                        <el-col :span="8">
+                            <span>正在部署版本为<span style="color: green;font-size: 30px">#12</span>的包</span>
+                        </el-col>
+                        <el-col :span="8">
+                            sdsf
+                        </el-col>
+                        <el-col :span="8">
+                            <span>{{deploymentHistories[0].id}}版本部署日志</span>
+                            <div style="background-color: black;color: white;">
+                                <br>
+                                <div v-for="o in deploymentHistories[0].result.status" :key="o" class="text item">
+                                    {{ o }}
+                                </div>
+                                <br>
+                            </div>
+                        </el-col>
+                    </el-row>
+
+                </el-card>
+                <el-card style="margin-top: 20px" shadow="hover">
+                    <div slot="header" class="clearfix">
+                        <span>部署历史</span>
+                    </div>
+                    <template>
+                        <el-table
+                                :data="deploymentHistories"
+                                stripe
+                                style="width: 100%">
+                            <el-table-column
+                                    prop="id"
+                                    label="部署版本"
+                                    width="180">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="buildVersion"
+                                    label="构建物版本">
+                            </el-table-column>
+                            <el-table-column
+                                    label="部署结果">
+                                <template slot-scope="scope">
+                                    <el-badge is-dot class="item" :type="scope.row.result.badge">
+                                    </el-badge>
+                                    <el-link :underline="false" @click="deployProcess(scope.row.result.status)">
+                                        <span :style="{color:scope.row.result.color}">{{scope.row.result.status[scope.row.result.status.length - 1]}}</span>
+                                    </el-link>
+                                </template>
+                            </el-table-column>
+                            <el-table-column
+                                    prop="username"
+                                    label="操作人">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="createdAt"
+                                    label="部署时间">
+                            </el-table-column>
+                        </el-table>
+                    </template>
+                </el-card>
+            </el-card>
+            <el-dialog width="30%" title="部署日志" :visible.sync="deployProcessVisible">
+                <div style="background-color: black;color: white;padding: 0px">
+                    <br>
+                    <div v-for="process in status" :key="process">
+                        <div v-if="process.includes('失败')">
+                            <span style="color: red;">{{process}}</span><br>
+                        </div>
+                        <div v-else>
+                            {{process}}<br>
+                        </div>
+                    </div>
+                    <br>
+                </div>
+            </el-dialog>
+            <el-dialog style="height: 800px" title="选择部署版本" :visible.sync="dialogTableVisible">
+                <div>
                     <el-table
-                            :data="deploymentHistories"
-                            stripe
+                            ref="singleTable"
+                            :data="deployData"
+                            highlight-current-row
+                            @current-change="handleCurrentChange"
                             style="width: 100%">
                         <el-table-column
-                                prop="id"
-                                label="部署版本"
-                                width="180">
+                                prop="version"
+                                label="版本"
+                                width="150">
                         </el-table-column>
                         <el-table-column
-                                prop="buildVersion"
-                                label="构建物版本">
-                        </el-table-column>
-                        <el-table-column
-                                label="部署结果">
+                                prop="deployStatus"
+                                label="状态"
+                                min-width="150">
                             <template slot-scope="scope">
-                                <el-badge is-dot class="item" :type="scope.row.result.badge">
-                                </el-badge>
-                                <el-link :underline="false" @click="deployProcess(scope.row.result.status)">
-                                    <span :style="{color:scope.row.result.color}">{{scope.row.result.status[scope.row.result.status.length - 1]}}</span>
-                                </el-link>
+                                <div v-if="scope.row.deployStatus == 'deploying'">
+                                    <div style="float:left;" v-loading="loading">
+                                        部署中...
+                                    </div>
+                                </div>
+                                <div v-else>
+                                    <!--<el-button :type="scope.row.deployStatus" icon="el-icon-star-off" circle></el-button>-->
+                                </div>
                             </template>
                         </el-table-column>
                         <el-table-column
-                                prop="username"
-                                label="操作人">
-                        </el-table-column>
-                        <el-table-column
-                                prop="createdAt"
-                                label="部署时间">
+                                prop=""
+                                label="选择"
+                                max-width="20%">
+                            <template slot-scope="scope">
+                                <div v-if="scope.row.showSelect">
+                                    <i style="font-size: 30px;color: green" class="el-icon-check"></i>
+                                </div>
+                            </template>
                         </el-table-column>
                     </el-table>
-                </template>
-            </el-card>
-        </el-card>
-        <el-dialog width="30%" title="部署日志" :visible.sync="deployProcessVisible">
-            <div style="background-color: black;color: white;padding: 0px">
-                <br>
-                <div v-for="process in status" :key="process">
-                    <div v-if="process.includes('失败')">
-                        <span style="color: red;">{{process}}</span><br>
-                    </div>
-                    <div v-else>
-                        {{process}}<br>
-                    </div>
                 </div>
-                <br>
-            </div>
-        </el-dialog>
-        <el-dialog style="height: 800px" title="选择部署版本" :visible.sync="dialogTableVisible">
-            <div>
-                <el-table
-                        ref="singleTable"
-                        :data="deployData"
-                        highlight-current-row
-                        @current-change="handleCurrentChange"
-                        style="width: 100%">
-                    <el-table-column
-                            prop="version"
-                            label="版本"
-                            width="150">
-                    </el-table-column>
-                    <el-table-column
-                            prop="deployStatus"
-                            label="状态"
-                            min-width="150">
-                        <template slot-scope="scope">
-                            <div v-if="scope.row.deployStatus == 'deploying'">
-                                <div style="float:left;" v-loading="loading">
-                                    部署中...
-                                </div>
-                            </div>
-                            <div v-else>
-                                <!--<el-button :type="scope.row.deployStatus" icon="el-icon-star-off" circle></el-button>-->
-                            </div>
-                        </template>
-                    </el-table-column>
-                    <el-table-column
-                            prop=""
-                            label="选择"
-                            max-width="20%">
-                        <template slot-scope="scope">
-                            <div v-if="scope.row.showSelect">
-                                <i style="font-size: 30px;color: green" class="el-icon-check"></i>
-                            </div>
-                        </template>
-                    </el-table-column>
-                </el-table>
-            </div>
-            <span slot="footer" class="dialog-footer">
+                <span slot="footer" class="dialog-footer">
                 <div>
                      <div v-if="deployVersion != null" style="float: left">
                         部署版本<span style="color: green;font-size: 30px">#{{deployVersion}}</span>
@@ -195,7 +213,9 @@
                      <el-button type="primary" @click="deploy">立即部署</el-button>
                 </div>
               </span>
-        </el-dialog>
+            </el-dialog>
+        </div>
+
     </div>
 
 </template>
@@ -218,7 +238,8 @@
                 deployData: null,
                 deployVersion: null,
                 jenkinsBuilds: [],
-                deploymentHistories: []
+                deploymentHistories: [],
+                deployType:'CONTAINER',
             }
         },
 
