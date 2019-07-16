@@ -1,14 +1,18 @@
 package com.lchen.ccdeploy.utils;
 
 import com.lchen.ccdeploy.model.k8s.Deployment;
-import io.fabric8.kubernetes.api.model.ReplicationController;
-import io.fabric8.kubernetes.api.model.ReplicationControllerSpec;
+import io.fabric8.kubernetes.api.model.*;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+
+import static com.google.common.collect.Lists.newArrayList;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * @author : lchen
@@ -53,4 +57,51 @@ public class KubernetesClients {
                 .inNamespace(deployment.getNamespace())
                 .createOrReplace(deployment.copyToK8sDeployment());
     }
+
+    public Set<ObjectMeta> listNamespaceObjectMeta() {
+        return client.namespaces().list().getItems().stream()
+                .map(Namespace::getMetadata)
+                .collect(toSet());
+    }
+
+    /**
+     * 获取所有k8s的名称空间
+     *
+     * @return
+     */
+    public Set<String> listNamespaceObjectMetaName() {
+        return listNamespaceObjectMeta().stream()
+                .map(ObjectMeta::getName)
+                .collect(toSet());
+    }
+
+    public void deletePod(String namespace, List<Pod> items) {
+        client.pods().inNamespace(namespace).delete(items);
+    }
+
+    /**
+     * 删除普通的pod
+     *
+     * @param namespace
+     * @param pod
+     */
+    public void deletePod(String namespace, Pod pod) {
+        deletePod(namespace, newArrayList(pod));
+    }
+
+
+    public void deleteRc(String namespace, ReplicationController item) {
+        deleteRc(namespace, newArrayList(item));
+    }
+
+    /**
+     * 对于通过ReplicationController创建的pod需要先删除rc
+     *
+     * @param namespace
+     * @param items
+     */
+    public void deleteRc(String namespace, List<ReplicationController> items) {
+        client.replicationControllers().inNamespace(namespace).delete(items);
+    }
+
 }
