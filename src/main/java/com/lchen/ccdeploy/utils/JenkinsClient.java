@@ -1,5 +1,6 @@
 package com.lchen.ccdeploy.utils;
 
+import com.google.common.collect.Lists;
 import com.offbytwo.jenkins.JenkinsServer;
 import com.offbytwo.jenkins.client.JenkinsHttpClient;
 import com.offbytwo.jenkins.model.Build;
@@ -27,7 +28,9 @@ public class JenkinsClient {
     private JenkinsHttpClient jenkinsHttpClient;
 
     public void build(@NonNull String jobName) throws IOException {
-        jenkinsServer.getJob(jobName).build(true);
+        JobWithDetails job = job(jobName);
+        if (job == null) throw new RuntimeException("该jobName不存在");
+        job.build(true);
     }
 
     public void pause(@NonNull String jobName, @NonNull Integer buildNumber) throws IOException {
@@ -42,28 +45,35 @@ public class JenkinsClient {
      * @param jobName
      * @throws IOException
      */
-    public void queues(@NonNull String jobName,Integer version) throws IOException {
+    public void queues(@NonNull String jobName, Integer version) throws IOException {
         Queue queue = jenkinsServer.getQueue();
         List<QueueItem> items = queue.getItems();
         QueueItem queueItem = jenkinsServer.getJob(jobName).getQueueItem();
 
     }
 
-    public Optional<Long> queueing(@NonNull String context) throws IOException {
-        QueueItem queueItem = jenkinsServer.getJob(context).getQueueItem();
+    public Optional<Long> queueing(@NonNull String jobName) throws IOException {
+        JobWithDetails job = job(jobName);
+        if (job == null) return Optional.empty();
+        QueueItem queueItem = job.getQueueItem();
         if (queueItem == null) return Optional.empty();
         return Optional.of(queueItem.getId());
     }
 
 
+    private JobWithDetails job(@NonNull String jobName) throws IOException {
+        return jenkinsServer.getJob(jobName);
+    }
+
     public List<Build> buildsByJob(@NonNull String jobName) throws IOException {
-        JobWithDetails job = jenkinsServer.getJob(jobName);
+        JobWithDetails job = job(jobName);
+        if (job == null) return Lists.newArrayList();
         return job.getBuilds();
     }
 
 
-    public BuildProgress buildProgress(String jobName,Integer version) throws IOException {
-        return jenkinsHttpClient.get("/job/"+jobName + "/" + version + "?tree=executor[progress]", BuildProgress.class);
+    public BuildProgress buildProgress(String jobName, Integer version) throws IOException {
+        return jenkinsHttpClient.get("/job/" + jobName + "/" + version + "?tree=executor[progress]", BuildProgress.class);
     }
 
 }
