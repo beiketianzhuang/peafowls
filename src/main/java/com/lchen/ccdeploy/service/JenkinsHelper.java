@@ -38,7 +38,11 @@ public class JenkinsHelper {
     @Scheduled(fixedRate = 6 * 1000)
     private void run() {
         Set<String> contexts = GlobalSession.getContextSessions().keySet();
-        contexts.forEach(this::updateJenkinsByContext);
+        try {
+            contexts.forEach(this::updateJenkinsByContext);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void updateJenkinsByContext(String context) {

@@ -4,8 +4,10 @@ import com.lchen.ccdeploy.config.handler.GlobalSession;
 import com.lchen.ccdeploy.model.DeploymentBuild;
 import com.lchen.ccdeploy.model.DeploymentResult;
 import com.lchen.ccdeploy.model.JenkinsBuild;
+import com.lchen.ccdeploy.model.k8s.K8sPod;
 import com.lchen.ccdeploy.service.DeploymentService;
 import com.lchen.ccdeploy.service.JenkinsService;
+import com.lchen.ccdeploy.service.KubernetesService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -29,11 +31,19 @@ public class DeployBuildThread {
     private DeploymentService deploymentService;
     @Autowired
     private ApplicationContext applicationContext;
+    @Autowired
+    private KubernetesService kubernetesService;
 
     @Scheduled(fixedRate = 8 * 1000)
     public void pushAll() {
         Set<String> contexts = GlobalSession.getContextSessions().keySet();
         contexts.forEach(this::pushByContext);
+    }
+
+    @Scheduled(fixedRate = 20 * 1000)
+    public void pushPod() {
+        Set<String> contexts = GlobalSession.getContextSessions().keySet();
+        contexts.forEach(this::pushPodByContext);
     }
 
     /**
@@ -49,9 +59,18 @@ public class DeployBuildThread {
                 .jenkinsBuilds(jenkinsBuilds)
                 .build();
         List<WebSocketSession> webSocketSessions = GlobalSession.getContextSessions().get(context);
-        for (WebSocketSession webSocketSession : webSocketSessions) {
-           pushBySession(webSocketSession,deploymentBuild);
-        }
+        webSocketSessions.forEach(session -> pushBySession(session, deploymentBuild));
+    }
+
+    /**
+     * 为每个应用推送pod相关信息
+     *
+     * @param context
+     */
+    public void pushPodByContext(String context) {
+        int podNumber = kubernetesService.getReplicas(context);
+        K8sPod k8sPod = K8sPod.builder().replicas(podNumber).build();
+        GlobalSession.getContextSessions().get(context).forEach(session -> pushPodBySession(session, k8sPod));
     }
 
     /**
@@ -59,18 +78,26 @@ public class DeployBuildThread {
      *
      * @param session
      */
-    public void pushBySession(WebSocketSession session,DeploymentBuild deploymentBuild) {
+    public void pushBySession(WebSocketSession session, DeploymentBuild deploymentBuild) {
         try {
-            GlobalSession.sendMessage(session,deploymentBuild.toMessage());
+            GlobalSession.sendMessage(session, deploymentBuild.toMessage());
         } catch (IOException e) {
-            log.error("推送构建部署信息失败",e);
+            log.error("推送构建部署信息失败", e);
+        }
+    }
+
+    public void pushPodBySession(WebSocketSession session, K8sPod k8sPod) {
+        try {
+            GlobalSession.sendMessage(session, k8sPod.toMessage());
+        } catch (IOException e) {
+            log.error("推送应用k8s信息失败", e);
         }
     }
 
     @PreDestroy
     public void destroy() {
         System.out.println("bean销毁......");
-        ThreadPoolTaskScheduler scheduler = (ThreadPoolTaskScheduler)applicationContext.getBean("scheduler");
+        ThreadPoolTaskScheduler scheduler = (ThreadPoolTaskScheduler) applicationContext.getBean("scheduler");
         scheduler.shutdown();
     }
 }

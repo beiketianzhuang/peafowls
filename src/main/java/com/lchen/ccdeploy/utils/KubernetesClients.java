@@ -48,6 +48,9 @@ public class KubernetesClients {
      * @param deployment
      */
     public void deploy(Deployment deployment) {
-        client.apps().deployments().inNamespace(deployment.getNamespace()).createOrReplace(null);
+        client.apps()
+                .deployments()
+                .inNamespace(deployment.getNamespace())
+                .createOrReplace(deployment.copyToK8sDeployment());
     }
 }

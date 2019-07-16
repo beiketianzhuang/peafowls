@@ -67,8 +67,8 @@
                     <span>应用部署</span>
                     <el-button style="float: right; padding: 3px 0" type="text">一键部署</el-button>
                 </div>
-                <div v-for="o in 4" :key="o" class="text item">
-                    <el-progress type="circle" :percentage="100" status="success" width="120"></el-progress>
+                <div v-for="o in replicas" :key="o" class="text item">
+                    <el-progress type="circle" :percentage="100" status="success"></el-progress>
                     <span>{{o}}</span>
                 </div>
             </el-card>
@@ -239,7 +239,8 @@
                 deployVersion: null,
                 jenkinsBuilds: [],
                 deploymentHistories: [],
-                deployType:'CONTAINER',
+                deployType: 'CONTAINER',
+                replicas: 0,
             }
         },
 
@@ -308,8 +309,16 @@
             },
             websocketonmessage(e) {
                 let resp = JSON.parse(e.data);
-                this.jenkinsBuilds = resp.jenkinsBuilds;
-                this.deploymentHistories = resp.deploymentHistories;
+                console.log(resp);
+                if (resp.jenkinsBuilds) {
+                    this.jenkinsBuilds = resp.jenkinsBuilds;
+                }
+                if (resp.deploymentHistories) {
+                    this.deploymentHistories = resp.deploymentHistories;
+                }
+                if (resp.replicas) {
+                    this.replicas = resp.replicas;
+                }
             },
             websocketclose(e) {
             }
