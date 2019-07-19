@@ -34,7 +34,7 @@ public class DeployBuildThread {
     @Autowired
     private KubernetesService kubernetesService;
 
-    @Scheduled(fixedRate = 8 * 1000)
+    @Scheduled(fixedRate = 3 * 1000)
     public void pushAll() {
         Set<String> contexts = GlobalSession.getContextSessions().keySet();
         contexts.forEach(this::pushByContext);

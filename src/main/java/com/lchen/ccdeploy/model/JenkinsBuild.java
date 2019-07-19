@@ -31,6 +31,7 @@ public class JenkinsBuild {
         JenkinsBuildStatus jenkinsBuildStatus = details.getBuildStatus();
         //fixme details.createdAt 在创建后同一个事务做查询，没有值
         return JenkinsBuild.builder()
+                .id(details.getId())
                 .buildStatus(details.getBuildStatus())
                 .version(details.getVersion())
                 .codeChange(details.getCodeChange())

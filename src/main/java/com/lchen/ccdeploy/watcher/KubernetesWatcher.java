@@ -25,7 +25,7 @@ public class KubernetesWatcher implements InitializingBean {
         //监听部署事件
         deploymentWather();
         //监听pod事件
-        podWatcher();
+//        podWatcher();
     }
 
     private void podWatcher() {

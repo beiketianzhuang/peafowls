@@ -37,10 +37,11 @@ public class DeploymentService {
     }
 
     public DeploymentVersion apply(JenkinsBuildHistory jenkinsBuildHistory) {
-        Optional<DeploymentResult> deploymentResultOptional = deploymentRepository.findAllByContextCanDeployVersion(
-                jenkinsBuildHistory.getJobName(),
-                jenkinsBuildHistory.getVersion());
-        return deploymentResultOptional.map(DeploymentVersion::apply).orElse(null);
+        return DeploymentVersion.applyBuild(jenkinsBuildHistory);
+//        Optional<DeploymentResult> deploymentResultOptional = deploymentRepository.findAllByContextCanDeployVersion(
+//                jenkinsBuildHistory.getJobName(),
+//                jenkinsBuildHistory.getVersion());
+//        return deploymentResultOptional.map(DeploymentVersion::apply).orElse(null);
     }
 
 }

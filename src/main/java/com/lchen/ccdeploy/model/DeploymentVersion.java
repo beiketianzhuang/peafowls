@@ -20,4 +20,11 @@ public class DeploymentVersion {
                 .deployStatus(result.getDeployStatus().deployStatus)
                 .build();
     }
+
+    public static DeploymentVersion applyBuild(JenkinsBuildHistory buildHistory) {
+        return DeploymentVersion.builder()
+                .version(buildHistory.getVersion())
+                .deployStatus(null)
+                .build();
+    }
 }

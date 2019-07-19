@@ -48,7 +48,7 @@ public class JenkinsHelper {
     public void updateJenkinsByContext(String context) {
         try {
             Optional<Long> optionalVersion = jenkinsClient.queueing(context);
-            optionalVersion.ifPresent(version -> updateJenkinsBuildQueueing(context, version));
+            optionalVersion.ifPresent(version -> updateJenkinsBuildQueueing(context, version - 1));
             List<Build> builds = jenkinsClient.buildsByJob(context);
             for (Build build : builds) {
                 updateJenkinsBuild(build, context);

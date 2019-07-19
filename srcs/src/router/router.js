@@ -3,6 +3,7 @@ import ContextList from '../components/ContextList';
 import ContextMonitor from '../components/ContextMonitor';
 import ApiManager from '../components/ApiManager';
 import ApiDetails from '../components/ApiDetails';
+import ContextEdit from '../components/ContextEdit';
 
 const routers = [{
     path: '/',
@@ -19,5 +20,8 @@ const routers = [{
 }, {
     path: '/apiDetails',
     component: ApiDetails
+}, {
+    path: '/contextEdit',
+    component: ContextEdit
 }];
 export default routers;

@@ -1,8 +1,12 @@
 package com.lchen.ccdeploy.model;
 
+import com.lchen.ccdeploy.model.constants.ContextType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
 /**
  * @author : lchen
@@ -15,9 +19,14 @@ public class ContextReq {
 
     private String context;
     private String jobName;
-    private String contextType;
+    private ContextType contextType;
     private String department;
     private Integer buildCount;
+    @Enumerated(EnumType.STRING)
+    private DeployType deployType;
+    private Integer deploymentStrategy;
+    private String kubernetesConfig;
+
     private PasswordLogin passwordLogin;
 
     @Data

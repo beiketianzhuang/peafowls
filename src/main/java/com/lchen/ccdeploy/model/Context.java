@@ -19,9 +19,12 @@ public class Context {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String context;
+    private String jobName;
     @Enumerated(EnumType.STRING)
     private ContextType contextType;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-
+    private String department;
+    @Enumerated(EnumType.STRING)
+    private DeployType deployType;
+    private Integer deploymentStrategy;
+    private String kubernetesConfig;
 }

@@ -2,7 +2,9 @@
     <el-card class="box-card">
         <div slot="header" class="clearfix">
             <span style="float: left"><h4>应用列表</h4></span>
-            <el-button style="float: right; padding: 3px 0" type="text" @click="addEvent">添加应用</el-button>
+            <el-button style="float: right; padding-left: 10px" type="text" @click="addEvent">添加linux应用</el-button>
+            <el-button style="float: right; padding-left: 10px" type="text" @click="addEventContainer">添加容器应用
+            </el-button>
         </div>
         <el-table
                 :data="contexts"
@@ -31,7 +33,7 @@
             </el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
-                    <div  style="padding: 8px">
+                    <div style="padding: 8px">
                         <i class="el-icon-edit" @click="handleEdit(scope.$index, scope.row)"></i>
                         <el-tooltip class="item" effect="dark" content="构建部署" placement="right-end">
                             <router-link :to="'/deploy?context='+scope.row.context">
@@ -39,19 +41,8 @@
 " @click="handleEdit(scope.$index, scope.row)"></i>
                             </router-link>
                         </el-tooltip>
-
-                        <!--<router-link :to="'/deploy?context='+scope.row.context">-->
-                        <!--<el-button size="mini">构建部署-->
-                        <!--</el-button>-->
-                        <!--</router-link>-->
                         <i @click="handleDelete(scope.$index, scope.row)" class="el-icon-delete"></i>
                         <span><i class="el-icon-more"></i></span>
-
-                        <!--<el-button-->
-                        <!--size="mini"-->
-                        <!--type="danger"-->
-                        <!--@click="handleDelete(scope.$index, scope.row)">删除-->
-                        <!--</el-button>-->
                     </div>
 
                 </template>
@@ -181,9 +172,11 @@
                 formLabelWidth: '120px'
             }
         },
+        created() {
+            this.contextList();
+        },
         methods: {
             buildDeploy(index, row) {
-
             },
             handleEdit(index, row) {
                 console.log(index, row);
@@ -194,6 +187,9 @@
             addEvent() {
                 this.title = "新增";
                 this.dialogFormVisible = true;
+            },
+            addEventContainer() {
+                this.$router.push("/contextEdit")
             },
             addContext() {
                 axios.post('/contexts', this.contextData)
@@ -207,6 +203,14 @@
                             type: 'error'
                         });
                     });
+            },
+            contextList() {
+                axios.get("/contexts")
+                    .then(resp => {
+                        this.contexts = resp.data;
+                    })
+                    .catch(e => {
+                    })
             }
         }
     }
