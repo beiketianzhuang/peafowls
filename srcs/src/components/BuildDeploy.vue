@@ -65,7 +65,7 @@
             <el-card class="box-card" style="margin-top: 20px">
                 <div slot="header" class="clearfix">
                     <span>应用部署</span>
-                    <el-button style="float: right; padding: 3px 0" type="text">一键部署</el-button>
+                    <el-button style="float: right; padding: 3px 0" type="text" @click="openAutoDeploy">一键部署</el-button>
                 </div>
                 <div v-for="o in replicas" :key="o" class="text item">
                     <el-progress type="circle" :percentage="100" status="success"></el-progress>
@@ -216,6 +216,51 @@
             </el-dialog>
         </div>
 
+        <el-dialog :title="deployConfirm.get(currentStep).title"
+                   :visible.sync="autoDeployVisible"
+                   :before-close="clearSelect">
+            <div v-if="currentStep == 1">
+                <el-table
+                        highlight-current-row
+                        @current-change="handleCurrentChange"
+                        :data="deployData" style="padding: 10px 20px;">
+                    <el-table-column prop="version" label="版本" width="150"></el-table-column>
+                    <el-table-column property="date" label="代码变更" min-width="20%"></el-table-column>
+                    <el-table-column
+                            prop=""
+                            label="选择"
+                            width="150">
+                        <template slot-scope="scope">
+                            <div v-if="scope.row.showSelect">
+                                <i style="font-size: 30px;color: green" class="el-icon-check"></i>
+                            </div>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                <!--<span slot="footer" class="dialog-footer">-->
+                <div>
+                    <div v-if="deployConfirm.get(1).deployVersion != null" style="float: left">
+                        部署版本<span style="color: green;font-size: 30px">#{{deployConfirm.get(1).deployVersion}}</span>
+                    </div>
+                    <el-button type="primary" @click="nextStep">下一步</el-button>
+                </div>
+                <!--</span>-->
+            </div>
+            <div v-else-if="currentStep == 2">
+                <el-form :model="contextData">
+                    <el-form-item label="部署方式">
+                        <el-radio-group v-model="contextData.deploymentStrategy">
+                            <el-radio :label="0">滚动部署</el-radio>
+                            <el-radio :label="1">删除重建</el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-form>
+                <el-button type="primary" @click="lastStep">上一步</el-button>
+                <el-button type="primary" @click="">立即部署</el-button>
+
+            </div>
+        </el-dialog>
+
     </div>
 
 </template>
@@ -227,28 +272,72 @@
     export default {
         data() {
             return {
+                autoDeployVisible: false,
                 context: '',
+                contextData: {
+                    deploymentStrategy: 0,
+                },
+
                 websock: {},
                 radio: '0',
                 loading: true,
                 status: [],
                 dialogTableVisible: false,
-                deployVersion: null,
+                // deployVersion: null,
                 deployProcessVisible: false,
-                deployData: null,
-                deployVersion: null,
+                deployConfirm: null,
+                currentStep: 1,
+                deployData: [{
+                    version: '4',
+                    name: '王小虎',
+                    address: '上海市普陀区金沙江路 1518 弄'
+                }, {
+                    version: '3',
+                    name: '王小虎',
+                    address: '上海市普陀区金沙江路 1518 弄'
+                }, {
+                    version: '2',
+                    name: '王小虎',
+                    address: '上海市普陀区金沙江路 1518 弄'
+                }, {
+                    version: '1',
+                    name: '王小虎',
+                    address: '上海市普陀区金沙江路 1518 弄'
+                }],
                 jenkinsBuilds: [],
                 deploymentHistories: [],
                 deployType: 'CONTAINER',
-                replicas: 0,
+                replicas: 0
             }
         },
 
         created() {
             this.context = this.$route.query.context;
+            this.deployConfirm = new Map([
+                [1, {deployVersion: null, title: "版本选择"}],
+                [2, {deploymentStrategy: 0, title: "部署方式选择"}]
+            ]);
             this.initWebSocket()
         },
         methods: {
+            clearSelect() {
+                this.autoDeployVisible = false;
+                this.currentStep = 1;
+                this.deployConfirm = null;
+                this.deployConfirm = new Map([
+                    [1, {deployVersion: null, title: "版本选择"}],
+                    [2, {deploymentStrategy: 0, title: "部署方式选择"}]
+                ]);
+            },
+            lastStep() {
+                this.currentStep = this.currentStep - 1;
+            },
+            nextStep() {
+                this.currentStep = this.currentStep + 1;
+            },
+            openAutoDeploy() {
+                this.autoDeployVisible = true;
+            },
             deployProcess(row) {
                 this.status = row;
                 this.deployProcessVisible = true;
@@ -277,17 +366,14 @@
                 axios.get('/contexts/deploy/version/' + this.context)
                     .then((response) => {
                         this.deployData = response.data;
-                        console.log(response.data);
                         // _self.deployData = response.data;
-                        console.log("deploydata:")
                     })
                     .catch(function (error) {
-                        console.log(error);
                     });
                 this.dialogTableVisible = true
             },
             handleCurrentChange(val) {
-                this.deployVersion = val.version;
+                this.deployConfirm.get(1).deployVersion = val.version;
                 this.deployData.forEach(function (value, index) {
                     value.showSelect = false;
                 });
@@ -309,7 +395,6 @@
             },
             websocketonmessage(e) {
                 let resp = JSON.parse(e.data);
-                console.log(resp);
                 if (resp.jenkinsBuilds) {
                     this.jenkinsBuilds = resp.jenkinsBuilds;
                 }
@@ -396,6 +481,14 @@
         padding: 10px 0;
         background-color: #f9fafc;
     }
+
+    /*.el-dialog__body {*/
+    /*padding: 10px 20px ;*/
+    /*color: #606266;*/
+    /*font-size: 14px;*/
+    /*word-break: break-all;*/
+    /*}*/
+
 
     /*.el-table td div{*/
     /*float: left;*/
