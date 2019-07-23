@@ -219,7 +219,7 @@
         <el-dialog :title="deployConfirm.get(currentStep).title"
                    :visible.sync="autoDeployVisible"
                    :before-close="clearSelect">
-            <div v-if="currentStep == 1">
+            <template v-if="currentStep == 1">
                 <el-table
                         highlight-current-row
                         @current-change="handleCurrentChange"
@@ -237,16 +237,19 @@
                         </template>
                     </el-table-column>
                 </el-table>
-                <!--<span slot="footer" class="dialog-footer">-->
-                <div>
-                    <div v-if="deployConfirm.get(1).deployVersion != null" style="float: left">
-                        部署版本<span style="color: green;font-size: 30px">#{{deployConfirm.get(1).deployVersion}}</span>
+                <span slot="footer" class="dialog-footer">
+                    <div v-if="deployVersion != null" style="float: left">
+                        部署版本<span style="color: green;font-size: 30px">#{{deployVersion}}</span>
                     </div>
-                    <el-button type="primary" @click="nextStep">下一步</el-button>
-                </div>
-                <!--</span>-->
-            </div>
-            <div v-else-if="currentStep == 2">
+                    <template v-if="deployVersion != null">
+                        <el-button type="primary" @click="nextStep">下一步</el-button>
+                    </template>
+                    <template v-if="deployVersion == null">
+                        <el-button disabled="" type="primary" @click="nextStep">下一步</el-button>
+                    </template>
+                </span>
+            </template>
+            <template v-else-if="currentStep == 2">
                 <el-form :model="contextData">
                     <el-form-item label="部署方式">
                         <el-radio-group v-model="contextData.deploymentStrategy">
@@ -255,10 +258,12 @@
                         </el-radio-group>
                     </el-form-item>
                 </el-form>
+                <span slot="footer" class="dialog-footer">
+
                 <el-button type="primary" @click="lastStep">上一步</el-button>
                 <el-button type="primary" @click="">立即部署</el-button>
-
-            </div>
+                </span>
+            </template>
         </el-dialog>
 
     </div>
@@ -272,6 +277,7 @@
     export default {
         data() {
             return {
+                deployVersion: null,
                 autoDeployVisible: false,
                 context: '',
                 contextData: {
@@ -320,14 +326,18 @@
             this.initWebSocket()
         },
         methods: {
-            clearSelect() {
+            clearSelect(row) {
                 this.autoDeployVisible = false;
                 this.currentStep = 1;
                 this.deployConfirm = null;
+                this.deployVersion = null;
                 this.deployConfirm = new Map([
                     [1, {deployVersion: null, title: "版本选择"}],
                     [2, {deploymentStrategy: 0, title: "部署方式选择"}]
                 ]);
+                this.deployData.forEach(function (value, index) {
+                    value.showSelect = false;
+                });
             },
             lastStep() {
                 this.currentStep = this.currentStep - 1;
@@ -373,6 +383,7 @@
                 this.dialogTableVisible = true
             },
             handleCurrentChange(val) {
+                this.deployVersion = val.version;
                 this.deployConfirm.get(1).deployVersion = val.version;
                 this.deployData.forEach(function (value, index) {
                     value.showSelect = false;

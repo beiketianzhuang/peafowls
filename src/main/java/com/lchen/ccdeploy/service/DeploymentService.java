@@ -5,6 +5,7 @@ import com.lchen.ccdeploy.dao.JenkinsBuildHistoryRepository;
 import com.lchen.ccdeploy.model.DeploymentResult;
 import com.lchen.ccdeploy.model.DeploymentVersion;
 import com.lchen.ccdeploy.model.JenkinsBuildHistory;
+import com.lchen.ccdeploy.model.req.DeploymentReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,8 @@ import static java.util.stream.Collectors.toList;
 public class DeploymentService {
 
     @Autowired
+    private DeployClient deployClient;
+    @Autowired
     private DeploymentRepository deploymentRepository;
     @Autowired
     private JenkinsBuildHistoryRepository jenkinsBuildHistoryRepository;
@@ -38,10 +41,13 @@ public class DeploymentService {
 
     public DeploymentVersion apply(JenkinsBuildHistory jenkinsBuildHistory) {
         return DeploymentVersion.applyBuild(jenkinsBuildHistory);
-//        Optional<DeploymentResult> deploymentResultOptional = deploymentRepository.findAllByContextCanDeployVersion(
-//                jenkinsBuildHistory.getJobName(),
-//                jenkinsBuildHistory.getVersion());
-//        return deploymentResultOptional.map(DeploymentVersion::apply).orElse(null);
     }
 
+    public void autoDeploy(DeploymentReq deploymentReq) {
+        //写入一条部署开始日志
+
+        //开始部署
+        deployClient.deploy(deploymentReq.getContext(),deploymentReq.getDeployVersion());
+
+    }
 }

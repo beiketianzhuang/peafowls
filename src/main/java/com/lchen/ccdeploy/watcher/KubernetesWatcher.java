@@ -3,6 +3,7 @@ package com.lchen.ccdeploy.watcher;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClientException;
+import io.fabric8.kubernetes.client.Watch;
 import io.fabric8.kubernetes.client.Watcher;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +19,9 @@ public class KubernetesWatcher implements InitializingBean {
     @Autowired
     private PodWatcher podWatcher;
     @Autowired
-    private KubernetesClient client;
+    private  KubernetesClient client;
 
+     Watch aDefault ;
     @Override
     public void afterPropertiesSet() throws Exception {
         //监听部署事件
@@ -29,7 +31,7 @@ public class KubernetesWatcher implements InitializingBean {
     }
 
     private void podWatcher() {
-        client.pods().inNamespace("default").watch(new Watcher<Pod>() {
+        aDefault = client.pods().inNamespace("default").watch(new Watcher<Pod>() {
             @Override
             public void eventReceived(Action action, Pod resource) {
                 podWatcher.eventReceived(action, resource);
