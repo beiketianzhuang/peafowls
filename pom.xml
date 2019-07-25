@@ -9,15 +9,19 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.lchen</groupId>
-    <artifactId>cc-deploy</artifactId>
+    <artifactId>peafowls-parent</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>cc-deploy</name>
+    <name>peafowls-parent</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>
         <java.version>1.8</java.version>
     </properties>
 
+    <modules>
+        <module>walle-api-client</module>
+        <module>walle-api-admin</module>
+    </modules>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
