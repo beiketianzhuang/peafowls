@@ -1,0 +1,25 @@
+server:
+  port: 8085
+
+spring:
+  datasource:
+    hikari:
+      jdbc-url: jdbc:mysql://127.0.0.1:3306/cc-deploy?Unicode=true&characterEncoding=UTF-8&serverTimezone=GMT
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      username: root
+      password: root
+funnel:
+  enable_programmatic_mapping: false
+  tracing:
+    enabled: false
+  mappings:
+    -
+      name: peafowls
+      host: peafowls.dev
+      destinations: localhost:8082
+
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: "*"

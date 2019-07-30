@@ -5,6 +5,7 @@ import ApiManager from '../components/ApiManager';
 import ApiDetails from '../components/ApiDetails';
 import ContextEdit from '../components/ContextEdit';
 import ContextDeployment from '../components/ContextDeployment';
+import PodManager from "../components/pod/PodManager";
 
 const routers = [{
     path: '/',
@@ -27,5 +28,8 @@ const routers = [{
 }, {
     path: '/contextDeployment',
     component: ContextDeployment
+}, {
+    path: '/pod-manager',
+    component: PodManager
 }];
 export default routers;

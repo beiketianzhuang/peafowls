@@ -10,7 +10,7 @@
                 </el-button>
             </div>
             <el-table
-                    :data="jenkinsBuilds"
+                    :data="jenkinsBuilds.slice((currentPage-1)*pageSize,currentPage*pageSize)"
                     style="width: 100%">
                 <el-table-column
                         prop="version"
@@ -60,6 +60,17 @@
                     </template>
                 </el-table-column>
             </el-table>
+            <div class="page-set" style="float: right;margin: 10px 0 10px 0">
+                <el-pagination
+                        @size-change="jenkinsHandleSizeChange"
+                        @current-change="jenkinsHandleCurrentChange"
+                        :current-page="currentPage"
+                        :page-sizes="[4, 10, 15, 20]"
+                        :page-size="pageSize"
+                        layout="total, sizes, prev, pager, next, jumper"
+                        :total="total">
+                </el-pagination>
+            </div>
         </el-card>
         <div v-if="deployType == 'CONTAINER'">
             <el-card class="box-card" style="margin-top: 20px">
@@ -265,7 +276,12 @@
                 </span>
             </template>
         </el-dialog>
-
+        <el-card class="box-card" style="margin-top: 20px">
+            <div slot="header" class="clearfix">
+                <span>Pod管理</span>
+                <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
+            </div>
+        </el-card>
     </div>
 
 </template>
@@ -283,7 +299,9 @@
                 contextData: {
                     deploymentStrategy: 0,
                 },
-
+                pageSize: 4,
+                total: 2,
+                currentPage: 1,
                 websock: {},
                 radio: '0',
                 loading: true,
@@ -326,6 +344,15 @@
             this.initWebSocket()
         },
         methods: {
+            jenkinsHandleSizeChange(val) {
+                this.pageSize = val;
+                this.currentPage = 1;
+            },
+
+            jenkinsHandleCurrentChange(val) {
+                this.currentPage = val;
+            },
+
             clearSelect(row) {
                 this.autoDeployVisible = false;
                 this.currentStep = 1;
@@ -408,6 +435,7 @@
                 let resp = JSON.parse(e.data);
                 if (resp.jenkinsBuilds) {
                     this.jenkinsBuilds = resp.jenkinsBuilds;
+                    this.total = this.jenkinsBuilds.length;
                 }
                 if (resp.deploymentHistories) {
                     this.deploymentHistories = resp.deploymentHistories;
