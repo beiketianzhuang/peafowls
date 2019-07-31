@@ -101,7 +101,6 @@
         </dependency>
     </dependencies>
 
-
     <build>
         <finalName>${project.artifactId}-${project.version}</finalName>
         <pluginManagement>
@@ -193,11 +192,13 @@
         </repository>
     </repositories>
 
-    <!--<distributionManagement>-->
-        <!--<repository>-->
-            <!--<id>maven-develop</id>-->
-            <!--<name>dev</name>-->
-            <!--<url>http://localhost:8083/repository/maven-develop/</url>-->
-        <!--</repository>-->
-    <!--</distributionManagement>-->
+    <pluginRepositories>
+        <pluginRepository>
+            <id>aliyun-plugin</id>
+            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
 </project>

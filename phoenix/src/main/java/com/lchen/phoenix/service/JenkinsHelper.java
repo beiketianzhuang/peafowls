@@ -1,10 +1,10 @@
 package com.lchen.phoenix.service;
 
-import com.lchen.ccdeploy.config.handler.GlobalSession;
-import com.lchen.ccdeploy.model.JenkinsBuildHistory;
-import com.lchen.ccdeploy.model.constants.JenkinsBuildStatus;
-import com.lchen.ccdeploy.thread.DeployBuildThread;
-import com.lchen.ccdeploy.utils.JenkinsClient;
+import com.lchen.phoenix.config.handler.GlobalSession;
+import com.lchen.phoenix.model.JenkinsBuildHistory;
+import com.lchen.phoenix.model.constants.JenkinsBuildStatus;
+import com.lchen.phoenix.thread.DeployBuildThread;
+import com.lchen.phoenix.utils.JenkinsClient;
 import com.offbytwo.jenkins.model.Build;
 import com.offbytwo.jenkins.model.BuildWithDetails;
 import lombok.NonNull;
@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.lchen.ccdeploy.model.JenkinsBuildHistory.buildHistory;
+import static com.lchen.phoenix.model.JenkinsBuildHistory.buildHistory;
 
 /**
  * @author : lchen

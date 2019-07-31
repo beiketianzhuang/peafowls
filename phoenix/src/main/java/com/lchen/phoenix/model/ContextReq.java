@@ -1,6 +1,6 @@
 package com.lchen.phoenix.model;
 
-import com.lchen.ccdeploy.model.constants.ContextType;
+import com.lchen.phoenix.model.constants.ContextType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

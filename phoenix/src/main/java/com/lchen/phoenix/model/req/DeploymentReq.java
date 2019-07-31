@@ -1,6 +1,6 @@
 package com.lchen.phoenix.model.req;
 
-import com.lchen.ccdeploy.model.DeployType;
+import com.lchen.phoenix.model.DeployType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

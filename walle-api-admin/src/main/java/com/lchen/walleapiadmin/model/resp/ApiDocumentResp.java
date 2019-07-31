@@ -4,13 +4,6 @@ import lombok.Builder;
 import lombok.Data;
 import org.springframework.http.HttpMethod;
 
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-
-import static javax.persistence.EnumType.STRING;
-
 /**
  * @author : lchen
  * @date : 2019/6/21
