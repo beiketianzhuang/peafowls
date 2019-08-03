@@ -90,17 +90,17 @@ public class AuthRequestInterceptor implements PreForwardRequestInterceptor {
 
     private void validateRestrict(RouterMappingProperties mapping) {
         Service service = this.getService(mapping);
+        if (service == null) return;
         if (service.isRestrictDev() && !envConfig.isDebug()) {
+            throw new RuntimeException("This service is restrict to dev and test environment only");
         }
     }
 
-    // check response Authorization and see if it's ok
-    // with the requested service
     private void validateSecurity(RequestData data, RouterMappingProperties mapping, String authorization) {
         // Check perimeter authorization
         if (AuthConstant.AUTHORIZATION_ANONYMOUS_WEB.equals(authorization)) {
             Service service = this.getService(mapping);
-            if (SecurityConstant.SEC_PUBLIC != service.getSecurity()) {
+            if (service!= null && SecurityConstant.SEC_PUBLIC != service.getSecurity()) {
                 log.info("Anonymous user want to access secure service, redirect to login");
                 // send to login
                 String scheme = "https";

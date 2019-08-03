@@ -53,6 +53,7 @@ public class ReverseProxyFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        String context = extractor.extractContext(request);
         String originUri = extractor.extractUri(request);
         String originHost = extractor.extractHost(request);
 
@@ -64,7 +65,7 @@ public class ReverseProxyFilter extends OncePerRequestFilter {
         HttpMethod method = extractor.extractHttpMethod(request);
 
 
-        RouterMappingProperties mapping = mappingsProvider.resolveMapping(originHost, request);
+        RouterMappingProperties mapping = mappingsProvider.resolveMapping(context, request);
         if (mapping == null) {
             log.debug(String.format("Forwarding: %s %s %s -> no mapping found", method, originHost, originUri));
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);

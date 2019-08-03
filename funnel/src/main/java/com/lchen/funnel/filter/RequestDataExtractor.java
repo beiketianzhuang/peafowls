@@ -1,5 +1,6 @@
 package com.lchen.funnel.filter;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 
@@ -25,7 +26,7 @@ public class RequestDataExtractor {
     public HttpHeaders extractHttpHeaders(HttpServletRequest request) {
         HttpHeaders headers = new HttpHeaders();
         Enumeration<String> headerNames = request.getHeaderNames();
-        while(headerNames.hasMoreElements()) {
+        while (headerNames.hasMoreElements()) {
             String name = headerNames.nextElement();
             List<String> value = list(request.getHeaders(name));
             headers.put(name, value);
@@ -35,6 +36,14 @@ public class RequestDataExtractor {
 
     public HttpMethod extractHttpMethod(HttpServletRequest request) {
         return HttpMethod.resolve(request.getMethod());
+    }
+
+    public String extractContext(HttpServletRequest request) {
+        if (StringUtils.isBlank(request.getRequestURI())) {
+            return EMPTY;
+        }
+        String[] urlArrays = StringUtils.split(request.getRequestURI(), "/");
+        return urlArrays[0];
     }
 
     public String extractUri(HttpServletRequest request) {

@@ -9,9 +9,11 @@ import org.springframework.boot.autoconfigure.web.ServerProperties;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.Optional;
 
-import static org.springframework.util.CollectionUtils.isEmpty;
+import static com.google.common.collect.Maps.newConcurrentMap;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * @author : lchen
@@ -24,7 +26,7 @@ public abstract class RouterMappingProvider {
     protected final FunnelProperties funnelProperties;
     protected final RouterMappingsValidator routerMappingsValidator;
     protected final HttpClientProvider httpClientProvider;
-    protected List<RouterMappingProperties> mappings;
+    protected Map<String,RouterMappingProperties> mappingsMap;
 
     public RouterMappingProvider(
             ServerProperties serverProperties,
@@ -42,22 +44,19 @@ public abstract class RouterMappingProvider {
         if (shouldUpdateMappings(request)) {
             updateMappings();
         }
-        List<RouterMappingProperties> resolvedMappings = mappings.stream()
-                .filter(mapping -> originHost.toLowerCase().equals(mapping.getHost().toLowerCase()))
-                .collect(Collectors.toList());
-        if (isEmpty(resolvedMappings)) {
-            return null;
-        }
-        return resolvedMappings.get(0);
+        return mappingsMap.get(originHost);
     }
 
     @PostConstruct
     protected synchronized void updateMappings() {
         List<RouterMappingProperties> newMappings = retrieveMappings();
         routerMappingsValidator.validate(newMappings);
-        mappings = newMappings;
-        httpClientProvider.updateHttpClients(mappings);
-        log.info("Destination mappings updated", mappings);
+        mappingsMap = Optional.ofNullable(newMappings)
+                .map(mappings-> mappings.stream()
+                        .collect(toMap(RouterMappingProperties::getName, a -> a)))
+                .orElse(newConcurrentMap());
+        httpClientProvider.updateHttpClients(newMappings);
+        log.info("Destination mappings updated", newMappings);
     }
 
     protected abstract boolean shouldUpdateMappings(HttpServletRequest request);
