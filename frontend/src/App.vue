@@ -23,31 +23,44 @@
                             <router-link to="/monitor" slot="title"><span style="color: azure">应用监控中心</span>
                             </router-link>
                         </el-menu-item>
-                        <el-menu-item index="3">
+                        <el-menu-item index="4">
                             <i class="el-icon-menu"></i>
                             <router-link to="/apiManager" slot="title"><span style="color: azure">API管理中心</span>
                             </router-link>
                         </el-menu-item>
-                        <el-menu-item index="4">
+                        <el-menu-item index="5">
                             <i class="el-icon-menu"></i>
                             <router-link to="/apiManager" slot="title"><span style="color: azure">告警中心</span>
                             </router-link>
                         </el-menu-item>
-                        <el-menu-item index="5">
+                        <el-menu-item index="6">
                             <i class="el-icon-menu"></i>
                             <router-link to="/apiManager" slot="title"><span style="color: azure">日志管理</span>
                             </router-link>
                         </el-menu-item>
-                        <el-menu-item index="3">
+                        <el-menu-item index="7">
                             <i class="el-icon-menu"></i>
                             <router-link to="/apiManager" slot="title"><span style="color: azure">配置中心</span>
                             </router-link>
                         </el-menu-item>
-                        <el-menu-item index="3">
+                        <el-menu-item index="8">
                             <i class="el-icon-menu"></i>
                             <router-link to="/apiManager" slot="title"><span style="color: azure">调度中心</span>
                             </router-link>
                         </el-menu-item>
+                        <el-submenu index="9">
+                            <template slot="title">
+                                <i class="el-icon-menu"></i>
+                                <span>工单平台</span>
+                            </template>
+                            <el-menu-item-group>
+                                <el-menu-item index="9-1">
+                                    <router-link to="/flowManager" slot="title"><span style="color: azure">流程管理</span>
+                                    </router-link>
+                                </el-menu-item>
+                                <el-menu-item index="9-2">发起工单</el-menu-item>
+                            </el-menu-item-group>
+                        </el-submenu>
                     </el-menu>
                 </el-col>
             </el-aside>

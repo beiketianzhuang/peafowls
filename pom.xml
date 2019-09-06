@@ -21,6 +21,7 @@
         <module>walle-api-admin</module>
         <module>funnel</module>
         <module>phoenix</module>
+        <module>flowplus</module>
     </modules>
 
     <dependencyManagement>

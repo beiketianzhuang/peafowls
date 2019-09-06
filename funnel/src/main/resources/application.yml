@@ -18,7 +18,15 @@ funnel:
       name: peafowls
       host: peafowls.dev
       destinations: localhost:8082
+    -
+      name: flowplus
+      host: flowplus.dev
+      destinations: localhost:8083
 
+logging:
+  level:
+    com:
+      lchen: debug
 #management:
 #  endpoints:
 #    web:

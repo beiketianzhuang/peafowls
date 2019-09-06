@@ -6,6 +6,7 @@ import ApiDetails from '../components/ApiDetails';
 import ContextEdit from '../components/ContextEdit';
 import ContextDeployment from '../components/ContextDeployment';
 import PodManager from "../components/pod/PodManager";
+import FlowManager from "../components/FlowManager";
 
 const routers = [{
     path: '/',
@@ -31,5 +32,8 @@ const routers = [{
 }, {
     path: '/pod-manager',
     component: PodManager
+}, {
+    path:'/flowManager',
+    component: FlowManager
 }];
 export default routers;

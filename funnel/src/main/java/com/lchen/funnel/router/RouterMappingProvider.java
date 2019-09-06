@@ -40,11 +40,11 @@ public abstract class RouterMappingProvider {
         this.httpClientProvider = httpClientProvider;
     }
 
-    public RouterMappingProperties resolveMapping(String originHost, HttpServletRequest request) {
+    public RouterMappingProperties resolveMapping(String context, HttpServletRequest request) {
         if (shouldUpdateMappings(request)) {
             updateMappings();
         }
-        return mappingsMap.get(originHost);
+        return mappingsMap.get(context);
     }
 
     @PostConstruct
